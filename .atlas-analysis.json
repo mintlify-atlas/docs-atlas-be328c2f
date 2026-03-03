@@ -1,0 +1,90 @@
+{
+  "projectType": "saas",
+  "projectName": "WallWidgy",
+  "projectDescription": "A modern, fast wallpaper discovery platform with AI-powered recommendations and comprehensive REST API",
+  "theme": "palm",
+  "primaryColor": "#F7F06D",
+  "lightColor": "#FEFCE8",
+  "darkColor": "#CA8A04",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/search",
+              "features/favorites",
+              "features/ai-recommendations",
+              "features/device-filtering"
+            ]
+          },
+          {
+            "group": "Using WallWidgy",
+            "pages": [
+              "guides/browsing",
+              "guides/categories",
+              "guides/colors",
+              "guides/mobile-experience"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api/introduction", "api/authentication", "api/rate-limits"]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/endpoints/random-wallpaper",
+              "api/endpoints/random-wallpapers",
+              "api/endpoints/wallpapers",
+              "api/endpoints/search",
+              "api/endpoints/colors"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "api/guides/filtering",
+              "api/guides/device-types",
+              "api/guides/categories",
+              "api/guides/colors",
+              "api/guides/examples"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Fast and optimized image delivery via GitHub CDN",
+    "Real-time search with device filtering (Desktop/Mobile)",
+    "Favorites system with local storage",
+    "AI-based similar wallpaper recommendations",
+    "RESTful API with comprehensive filtering options",
+    "Color-based wallpaper filtering",
+    "Category browsing (anime, abstract, nature, tech, etc.)",
+    "Fully responsive mobile design with swipe gestures",
+    "Dark theme with smooth animations",
+    "CORS-enabled API for cross-origin requests"
+  ],
+  "publicApiSurface": [
+    "GET /api/random-wallpaper - Get a single random wallpaper",
+    "GET /api/random-wallpapers?count=N - Get multiple random wallpapers",
+    "GET /api/wallpapers?type=desktop|mobile&category=X&color=Y&count=N - Get filtered wallpapers",
+    "GET /api/wallpapers/search?q=query&count=N - Search wallpapers by keyword",
+    "GET /api/colors - Get all available color filters",
+    "GET /api/wallpapers/[public_id] - Get specific wallpaper by ID",
+    "GET /api/favorites/[username] - Get user's favorite wallpapers"
+  ]
+}
