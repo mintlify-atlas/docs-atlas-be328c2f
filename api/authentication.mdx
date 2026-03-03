@@ -1,0 +1,158 @@
+---
+title: "Authentication"
+description: "No authentication required—access the API freely with full CORS support"
+---
+
+## No authentication required
+
+The WallWidgy API is fully public and requires no authentication. You can make requests directly from any application without API keys, tokens, or credentials.
+
+This design makes it easy to:
+
+- Quickly prototype and test API endpoints
+- Build client-side applications without backend proxies
+- Access wallpapers from any environment
+- Share API endpoints with collaborators
+
+<Info>
+  While no authentication is required, please follow our [fair usage guidelines](/api/rate-limits) to ensure the API remains available for everyone.
+</Info>
+
+## CORS support
+
+The API is CORS-enabled with permissive headers, allowing you to make requests from any origin. This means you can call the API directly from web browsers, including:
+
+- Single-page applications (SPAs)
+- Browser extensions
+- Mobile web apps
+- Static websites
+
+**CORS headers returned by the API:**
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET
+Access-Control-Allow-Headers: Content-Type
+```
+
+### Browser example
+
+You can fetch wallpapers directly from client-side JavaScript:
+
+```javascript
+fetch('https://your-site.vercel.app/api/wallpapers?count=3&type=desktop')
+  .then(response => response.json())
+  .then(data => {
+    console.log('Retrieved wallpapers:', data.wallpapers);
+    // Use the wallpaper URLs directly in your app
+  })
+  .catch(error => console.error('Error:', error));
+```
+
+<Note>
+  The API only supports `GET` requests. Preflight `OPTIONS` requests are handled automatically for CORS compatibility.
+</Note>
+
+## Fair usage guidelines
+
+Since the API is public and requires no authentication, we rely on the community to use it responsibly:
+
+- **Cache responses** when possible to reduce redundant requests
+- **Respect rate limits** as described in our [rate limits documentation](/api/rate-limits)
+- **Use appropriate count parameters**—don't request more wallpapers than you need
+- **Implement exponential backoff** if you receive errors
+
+### Caching recommendations
+
+To reduce load on the API and improve your application's performance:
+
+1. **Cache wallpaper URLs** for a reasonable time period (e.g., 1 hour to 24 hours)
+2. **Store category and color lists** since they change infrequently
+3. **Implement client-side caching** using browser storage or application state
+
+```javascript
+// Example: Simple in-memory cache
+const cache = new Map();
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+
+async function getCachedWallpapers(url) {
+  const cached = cache.get(url);
+  
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  
+  const response = await fetch(url);
+  const data = await response.json();
+  
+  cache.set(url, {
+    data,
+    timestamp: Date.now()
+  });
+  
+  return data;
+}
+```
+
+## Error handling
+
+Always implement proper error handling in your applications:
+
+```javascript
+async function fetchWallpapers() {
+  try {
+    const response = await fetch('https://your-site.vercel.app/api/wallpapers');
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch wallpapers');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('API error:', error.message);
+    // Implement fallback behavior
+    return null;
+  }
+}
+```
+
+<Warning>
+  While the API is public, excessive or abusive usage may result in rate limiting or IP blocking to protect service availability.
+</Warning>
+
+## Best practices
+
+Follow these best practices when using the WallWidgy API:
+
+<Steps>
+  <Step title="Start with minimal requests">
+    Request only what you need. Use `count=1` for single wallpaper use cases.
+  </Step>
+  
+  <Step title="Implement caching">
+    Cache API responses to reduce redundant requests and improve performance.
+  </Step>
+  
+  <Step title="Handle errors gracefully">
+    Always check response status and handle errors appropriately.
+  </Step>
+  
+  <Step title="Use filters effectively">
+    Leverage category, type, and color filters to get exactly what you need.
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+
+<Card title="Rate limits" icon="gauge" href="/api/rate-limits">
+  Learn about fair usage and limits
+</Card>
+
+<Card title="Endpoints" icon="code" href="/api/endpoints/wallpapers">
+  Explore available API endpoints
+</Card>
+
+</CardGroup>

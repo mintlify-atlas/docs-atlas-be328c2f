@@ -1,0 +1,183 @@
+---
+title: Device filtering
+description: Filter wallpapers by desktop or mobile orientation to find perfectly sized wallpapers for your device
+---
+
+# Device filtering
+
+WallWidgy automatically detects wallpaper orientation and lets you filter by device type to find wallpapers optimized for your screen.
+
+## Device types
+
+All wallpapers are classified into two categories based on their aspect ratio:
+
+<CardGroup cols={2}>
+  <Card title="Desktop wallpapers" icon="desktop">
+    Horizontal/landscape orientation where width > height. Optimized for monitors, laptops, and widescreen displays.
+  </Card>
+  
+  <Card title="Mobile wallpapers" icon="mobile">
+    Vertical/portrait orientation where height > width. Optimized for phones and tablets in portrait mode.
+  </Card>
+</CardGroup>
+
+## How orientation detection works
+
+Wallpapers are automatically classified based on their dimensions:
+
+```typescript
+// From WallpaperGrid.tsx and API routes
+orientation: width > height ? "Desktop" : "Mobile"
+tag: width > height ? "Desktop" : "Mobile"
+platform: width > height ? "Desktop" : "Mobile"
+```
+
+This ensures every wallpaper is accurately categorized for filtering.
+
+## Using device filters
+
+### In the main gallery
+
+<Steps>
+  <Step title="Find the filter buttons">
+    Look for the device filter buttons at the top of the wallpaper grid: All / Desktop / Mobile
+  </Step>
+  
+  <Step title="Select your device type">
+    Click **Desktop** to show only landscape wallpapers, **Mobile** for portrait wallpapers, or **All** to show everything
+  </Step>
+  
+  <Step title="See filtered results">
+    The grid updates instantly to show only wallpapers matching your selected orientation
+  </Step>
+  
+  <Step title="Visual indicators">
+    Each wallpaper shows a badge indicating whether it's Desktop or Mobile optimized
+  </Step>
+</Steps>
+
+### In search results
+
+The search overlay includes device filtering:
+
+1. Open search with `Cmd/Ctrl + K`
+2. Select All/Desktop/Mobile filter at the top
+3. Search results update in real-time based on your filter
+4. Device filter persists across searches
+
+### In categories
+
+When browsing categories, device filtering is available:
+
+- Filter by device type within any category
+- See category-specific wallpapers for your device
+- Combine category and device filters for precise results
+
+## Common resolutions
+
+### Desktop resolutions
+
+Common desktop wallpaper sizes you'll find:
+
+- **1920×1080** (Full HD)
+- **2560×1440** (2K/QHD)
+- **3840×2160** (4K/UHD)
+- **5120×2880** (5K)
+
+### Mobile resolutions
+
+Common mobile wallpaper sizes:
+
+- **1080×1920** (Full HD portrait)
+- **1440×2960** (QHD+ portrait)
+- **1284×2778** (iPhone portrait)
+- **1170×2532** (iPhone portrait)
+
+<Note>
+  Resolution information is displayed on each wallpaper thumbnail and in the fullscreen modal, helping you choose wallpapers that match your screen perfectly.
+</Note>
+
+## Platform badges
+
+Every wallpaper displays a platform badge showing its orientation:
+
+- **Desktop badge** - Blue badge for landscape wallpapers
+- **Mobile badge** - Green badge for portrait wallpapers
+- **Resolution indicator** - Shows actual pixel dimensions
+
+These badges appear on:
+- Thumbnail hovers in grid view
+- Search results
+- Similar wallpaper recommendations
+- Favorites page
+
+## API filtering
+
+You can filter by device type using the API:
+
+```bash
+# Get desktop wallpapers only
+curl "https://wallwidgy.vercel.app/api/wallpapers?type=desktop&count=5"
+
+# Get mobile wallpapers only
+curl "https://wallwidgy.vercel.app/api/wallpapers?type=mobile&count=5"
+```
+
+See the [API device types guide](/api/guides/device-types) for more details.
+
+## Mobile-first experience
+
+On mobile devices, WallWidgy automatically:
+
+- Defaults to showing mobile-optimized wallpapers
+- Uses mobile-specific layout (automatic masonry)
+- Optimizes image quality (65% vs 75% on desktop)
+- Reduces animation complexity for better performance
+
+<Tip>
+  The device filter is detected at 768px width. Devices narrower than 768px are considered mobile and get optimized animations and layout.
+</Tip>
+
+## Filter persistence
+
+Your device filter preference is:
+
+- Saved in component state during your session
+- Reset when you navigate to a new page
+- Independent between search and gallery views
+- Not stored in localStorage (resets on page reload)
+
+## Smart filtering combinations
+
+Combine device filtering with other features:
+
+<CardGroup cols={2}>
+  <Card title="Device + Category" icon="layer-group">
+    Find desktop anime wallpapers or mobile nature wallpapers
+  </Card>
+  
+  <Card title="Device + Color" icon="palette">
+    Search for mobile dark wallpapers or desktop blue wallpapers
+  </Card>
+  
+  <Card title="Device + Search" icon="magnifying-glass">
+    Search for "minimal" and filter by desktop orientation
+  </Card>
+  
+  <Card title="Device + Favorites" icon="heart">
+    View only mobile wallpapers from your favorites collection
+  </Card>
+</CardGroup>
+
+## Performance considerations
+
+Device filtering happens client-side for instant response:
+
+- No API requests when toggling filters
+- All wallpapers are loaded with orientation metadata
+- Filter updates trigger efficient React re-renders
+- Smooth transitions between filtered states
+
+<Warning>
+  When filtering by device type, you'll only see wallpapers matching that orientation. Switch to "All" to see the complete collection.
+</Warning>

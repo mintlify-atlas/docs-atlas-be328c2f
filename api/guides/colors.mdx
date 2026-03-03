@@ -1,0 +1,451 @@
+---
+title: Color filtering
+description: Filter wallpapers by color to match your theme or aesthetic preferences
+---
+
+## Overview
+
+The WallWidgy API analyzes wallpapers and extracts both primary and secondary colors. You can filter wallpapers using the `color` query parameter to find images that match your preferred color scheme.
+
+## How color filtering works
+
+Each wallpaper in the collection has:
+
+- **Primary colors** - The dominant colors in the image
+- **Secondary colors** - Supporting colors that appear in the image
+
+The API searches both primary and secondary colors when you apply a color filter.
+
+## Common colors
+
+These colors are frequently available in the collection:
+
+<CardGroup cols={4}>
+  <Card title="Black" icon="square" color="#000000">
+    Dark, bold wallpapers
+  </Card>
+  <Card title="White" icon="square" color="#FFFFFF">
+    Clean, bright wallpapers
+  </Card>
+  <Card title="Gray" icon="square" color="#808080">
+    Neutral, balanced wallpapers
+  </Card>
+  <Card title="Red" icon="square" color="#FF0000">
+    Bold, energetic wallpapers
+  </Card>
+  <Card title="Blue" icon="square" color="#0000FF">
+    Calm, cool wallpapers
+  </Card>
+  <Card title="Green" icon="square" color="#00FF00">
+    Natural, fresh wallpapers
+  </Card>
+  <Card title="Yellow" icon="square" color="#FFFF00">
+    Bright, cheerful wallpapers
+  </Card>
+  <Card title="Orange" icon="square" color="#FFA500">
+    Warm, vibrant wallpapers
+  </Card>
+  <Card title="Purple" icon="square" color="#800080">
+    Rich, creative wallpapers
+  </Card>
+  <Card title="Pink" icon="square" color="#FFC0CB">
+    Soft, playful wallpapers
+  </Card>
+  <Card title="Brown" icon="square" color="#A52A2A">
+    Earthy, warm wallpapers
+  </Card>
+  <Card title="Cyan" icon="square" color="#00FFFF">
+    Cool, digital wallpapers
+  </Card>
+</CardGroup>
+
+## Additional color values
+
+The API also supports these color variations:
+
+- `silver` - Metallic gray tones
+- `gold` - Warm metallic tones
+- `teal` - Blue-green tones
+- `navy` - Dark blue tones
+- `maroon` - Dark red tones
+- `olive` - Yellow-green tones
+- `lime` - Bright yellow-green
+- `aqua` - Light blue tones
+- `magenta` - Bright pink-purple
+- `beige` - Light brown tones
+- `ivory` - Off-white tones
+- `khaki` - Light brown-yellow
+
+## Basic usage
+
+### Filter by color
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?color=blue"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?color=blue'
+);
+const data = await response.json();
+console.log(data.wallpapers);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'color': 'blue'}
+)
+wallpapers = response.json()['wallpapers']
+```
+
+</CodeGroup>
+
+## Color examples
+
+### Black wallpapers
+
+Perfect for dark themes and AMOLED screens:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=black&count=5"
+```
+
+### Blue wallpapers
+
+Calm and cool tones:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=blue&count=3"
+```
+
+### White wallpapers
+
+Clean and minimal:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=white"
+```
+
+### Red wallpapers
+
+Bold and energetic:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=red&count=5"
+```
+
+## Combining with other filters
+
+### Color + category
+
+Get blue nature wallpapers:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?color=blue&category=nature"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?color=blue&category=nature'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'color': 'blue', 'category': 'nature'}
+)
+```
+
+</CodeGroup>
+
+### Color + device type
+
+Get mobile wallpapers with black:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?color=black&type=mobile"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?color=black&type=mobile'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'color': 'black', 'type': 'mobile'}
+)
+```
+
+</CodeGroup>
+
+### Color + category + device type
+
+Get desktop anime wallpapers with blue tones:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?color=blue&category=anime&type=desktop"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?color=blue&category=anime&type=desktop'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={
+        'color': 'blue',
+        'category': 'anime',
+        'type': 'desktop'
+    }
+)
+```
+
+</CodeGroup>
+
+## Response format
+
+The response includes the color filter in the metadata:
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/wallpapers_blue_001.webp"
+  ],
+  "count": 1,
+  "category": "all",
+  "type": "all",
+  "color": "blue"
+}
+```
+
+## Error handling
+
+If no wallpapers match the color:
+
+```json
+{
+  "error": "No wallpapers found with color 'violet'"
+}
+```
+
+<Note>
+  Color names are case-insensitive. Both `blue` and `Blue` work the same way.
+</Note>
+
+## Practical examples
+
+### Theme-based color picker
+
+```javascript
+const themeColors = {
+  dark: 'black',
+  light: 'white',
+  ocean: 'blue',
+  forest: 'green',
+  sunset: 'orange',
+  night: 'purple'
+};
+
+async function fetchThemeWallpaper(theme, count = 3) {
+  const color = themeColors[theme];
+  
+  if (!color) {
+    throw new Error(`Unknown theme: ${theme}`);
+  }
+  
+  const response = await fetch(
+    `https://wallwidgy.com/api/wallpapers?color=${color}&count=${count}`
+  );
+  
+  return await response.json();
+}
+
+// Usage
+const oceanWallpapers = await fetchThemeWallpaper('ocean', 5);
+console.log(oceanWallpapers);
+```
+
+### Color palette generator
+
+```javascript
+async function getColorPalette(colors, countPerColor = 2) {
+  const promises = colors.map(color =>
+    fetch(
+      `https://wallwidgy.com/api/wallpapers?color=${color}&count=${countPerColor}`
+    ).then(res => res.json())
+  );
+  
+  const results = await Promise.all(promises);
+  
+  return results.reduce((acc, data, index) => {
+    acc[colors[index]] = data.wallpapers;
+    return acc;
+  }, {});
+}
+
+// Usage
+const palette = await getColorPalette(['blue', 'green', 'purple'], 3);
+console.log(palette);
+// {
+//   blue: [...3 wallpapers],
+//   green: [...3 wallpapers],
+//   purple: [...3 wallpapers]
+// }
+```
+
+### Mood-based wallpaper selector
+
+```python
+import requests
+
+MOOD_COLORS = {
+    'calm': 'blue',
+    'energetic': 'red',
+    'natural': 'green',
+    'creative': 'purple',
+    'minimal': 'black',
+    'bright': 'yellow',
+    'professional': 'gray'
+}
+
+def get_wallpaper_by_mood(mood, device_type='mobile', count=5):
+    """Fetch wallpapers based on mood"""
+    color = MOOD_COLORS.get(mood.lower())
+    
+    if not color:
+        raise ValueError(f"Unknown mood: {mood}")
+    
+    response = requests.get(
+        'https://wallwidgy.com/api/wallpapers',
+        params={
+            'color': color,
+            'type': device_type,
+            'count': count
+        }
+    )
+    
+    return response.json()['wallpapers']
+
+# Usage
+calm_wallpapers = get_wallpaper_by_mood('calm', device_type='desktop', count=10)
+print(f"Got {len(calm_wallpapers)} calm wallpapers")
+```
+
+### AMOLED battery saver
+
+```python
+import requests
+
+def get_battery_saving_wallpapers(count=5):
+    """Fetch black wallpapers optimized for AMOLED screens"""
+    response = requests.get(
+        'https://wallwidgy.com/api/wallpapers',
+        params={
+            'color': 'black',
+            'category': 'amoled',
+            'type': 'mobile',
+            'count': count
+        }
+    )
+    
+    return response.json()['wallpapers']
+
+# Usage
+amoled_wallpapers = get_battery_saving_wallpapers(10)
+```
+
+## Color matching tips
+
+### Exact color matching
+
+The API looks for exact color name matches in both primary and secondary colors:
+
+```bash
+# This will match wallpapers with "blue" in primary OR secondary colors
+curl "https://wallwidgy.com/api/wallpapers?color=blue"
+```
+
+### Color variations
+
+Some colors have variations you can try:
+
+- **Blue**: `blue`, `cyan`, `navy`, `teal`, `aqua`
+- **Red**: `red`, `maroon`, `pink`, `magenta`
+- **Green**: `green`, `lime`, `olive`, `teal`
+- **Gray**: `gray`, `silver`, `white`, `black`
+- **Brown**: `brown`, `beige`, `khaki`
+
+## Popular color combinations
+
+### Dark theme wallpapers
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=black&category=minimal&type=mobile&count=5"
+```
+
+### Ocean theme wallpapers
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=blue&category=nature&count=5"
+```
+
+### Forest theme wallpapers
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=green&category=nature&count=5"
+```
+
+### Tech aesthetic wallpapers
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=cyan&category=tech&type=desktop&count=3"
+```
+
+### Warm tone wallpapers
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=orange&category=art&count=5"
+```
+
+## Best practices
+
+1. **Use common colors** - Stick to basic color names for best results
+2. **Combine with categories** - Get more specific results by adding category filters
+3. **Try variations** - If one color doesn't work, try related colors
+4. **Check error messages** - The API will tell you if a color has no matches
+
+<Tip>
+  For AMOLED displays, combine `color=black` with `category=amoled` for the best battery-saving wallpapers.
+</Tip>
+
+<Note>
+  The API searches both primary and secondary colors, so you'll get wallpapers where your chosen color appears prominently or as an accent.
+</Note>

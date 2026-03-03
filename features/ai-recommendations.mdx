@@ -1,0 +1,199 @@
+---
+title: AI-powered recommendations
+description: Discover similar wallpapers using a sophisticated similarity algorithm that analyzes visual characteristics and metadata
+---
+
+# AI-powered recommendations
+
+WallWidgy's AI recommendation system helps you discover visually similar wallpapers using a sophisticated similarity algorithm that analyzes multiple dimensions of each wallpaper's characteristics.
+
+## How it works
+
+When you view any wallpaper in fullscreen mode, you can see similar recommendations that match based on visual style, colors, themes, and metadata.
+
+<CardGroup cols={2}>
+  <Card title="Multi-factor analysis" icon="brain">
+    Analyzes art style, series, character names, color palettes, mood, technique, tags, and categories
+  </Card>
+  
+  <Card title="Weighted scoring" icon="scale-balanced">
+    Different factors have different weights to prioritize the most relevant similarities
+  </Card>
+  
+  <Card title="Real-time matching" icon="bolt">
+    Recommendations are calculated instantly from the entire wallpaper collection
+  </Card>
+  
+  <Card title="Paginated results" icon="layer-group">
+    Browse multiple pages of similar wallpapers with automatic pagination
+  </Card>
+</CardGroup>
+
+## Similarity algorithm
+
+The recommendation engine uses a weighted scoring system to determine similarity:
+
+### Scoring weights
+
+From the source code (`app/components/SimilarWallpapers.tsx`), the algorithm assigns these weights:
+
+```typescript
+// Exact matches (highest priority)
+art_style: 20 points
+series: 18 points
+character: 15 points
+
+// Close matches
+primary_colors: 12 points (per matching color)
+secondary_colors: 8 points (per matching color)
+mood: 10 points
+technique: 10 points
+
+// General matches
+tags: 5 points (per matching tag)
+category: 8 points
+color_palette: 6 points (per matching color)
+```
+
+### How matching works
+
+<Steps>
+  <Step title="Extract metadata">
+    The algorithm extracts all metadata fields from the current wallpaper
+  </Step>
+  
+  <Step title="Compare with collection">
+    Each wallpaper in the collection is scored against the current wallpaper
+  </Step>
+  
+  <Step title="Calculate similarity score">
+    Points are added for each matching field based on the weights above
+  </Step>
+  
+  <Step title="Rank and filter">
+    Wallpapers are ranked by total score, with a minimum threshold to ensure quality
+  </Step>
+  
+  <Step title="Present results">
+    Top-scoring wallpapers are shown in paginated groups
+  </Step>
+</Steps>
+
+## Using recommendations
+
+### Viewing similar wallpapers
+
+<Steps>
+  <Step title="Open a wallpaper">
+    Click any wallpaper to view it in fullscreen mode
+  </Step>
+  
+  <Step title="Click 'Similar' button">
+    Click the sparkles icon or "Similar" button in the modal
+  </Step>
+  
+  <Step title="Browse recommendations">
+    Scroll through pages of visually similar wallpapers
+  </Step>
+  
+  <Step title="Click to switch">
+    Click any recommended wallpaper to view it in fullscreen mode
+  </Step>
+</Steps>
+
+### Refreshing recommendations
+
+Click the refresh icon to shuffle and see different similar wallpapers from the collection.
+
+## Recommendation examples
+
+<Accordion title="Anime wallpaper recommendations">
+For an anime wallpaper featuring a specific series and character:
+- **High match**: Same series, same character (18 + 15 = 33 points)
+- **Medium match**: Same series, different character (18 points)
+- **Lower match**: Same art style (anime), similar colors (20 + 12 = 32 points)
+</Accordion>
+
+<Accordion title="Nature landscape recommendations">
+For a nature landscape with sunset colors:
+- **High match**: Same mood (calm), same technique (photography), matching warm colors (10 + 10 + 12 = 32 points)
+- **Medium match**: Same category (nature), similar color palette (8 + 6 = 14 points)
+- **Lower match**: Matching tags (landscape, outdoor) (5 + 5 = 10 points)
+</Accordion>
+
+<Accordion title="Abstract minimal recommendations">
+For an abstract minimal wallpaper:
+- **High match**: Same art style (abstract), same technique (vector), same mood (calm) (20 + 10 + 10 = 40 points)
+- **Medium match**: Same category (minimal), matching primary colors (8 + 12 = 20 points)
+- **Lower match**: Similar color palette, shared tags (6 + 5 = 11 points)
+</Accordion>
+
+## Pagination
+
+Recommendations are displayed in pages:
+
+- **Responsive grid**: 4-10 wallpapers per row depending on screen size
+- **Multiple pages**: Browse through several pages of recommendations
+- **Dynamic loading**: Pages load instantly from pre-calculated results
+- **Visual indicators**: Current page and total pages shown
+
+## Performance optimization
+
+The recommendation engine is optimized for speed:
+
+- **Client-side processing**: All calculations happen in the browser
+- **Efficient scoring**: Similarity scores are calculated only once per view
+- **Paginated display**: Only visible wallpapers are rendered
+- **Cached metadata**: Wallpaper metadata is loaded once and reused
+
+<Tip>
+  The AI recommendations work best for wallpapers with rich metadata. Wallpapers with detailed tags, series information, and color data will have more accurate recommendations.
+</Tip>
+
+## Technical implementation
+
+The similarity calculation from `SimilarWallpapers.tsx`:
+
+```typescript
+const calculateSimilarity = (w1: Wallpaper, w2: Wallpaper): number => {
+  let score = 0
+  const data1 = w1.data || {}
+  const data2 = w2.data || {}
+
+  // High-weight exact matches
+  if (data1.art_style === data2.art_style) score += 20
+  if (data1.series === data2.series) score += 18
+  if (data1.character === data2.character) score += 15
+
+  // Color matching (primary and secondary)
+  const primary1 = (data1.primary_colors || '').split(' ')
+  const primary2 = (data2.primary_colors || '').split(' ')
+  score += primary1.filter(c => primary2.includes(c)).length * 12
+
+  const secondary1 = (data1.secondary_colors || '').split(' ')
+  const secondary2 = (data2.secondary_colors || '').split(' ')
+  score += secondary1.filter(c => secondary2.includes(c)).length * 8
+
+  // Mood and technique
+  if (data1.mood === data2.mood) score += 10
+  if (data1.technique === data2.technique) score += 10
+
+  // Tag matching
+  const tags1 = (data1.tags || '').split(',').map(t => t.trim())
+  const tags2 = (data2.tags || '').split(',').map(t => t.trim())
+  score += tags1.filter(t => tags2.includes(t)).length * 5
+
+  // Category and palette
+  if (w1.category === w2.category) score += 8
+  
+  const palette1 = (data1.color_palette || '').split(' ')
+  const palette2 = (data2.color_palette || '').split(' ')
+  score += palette1.filter(c => palette2.includes(c)).length * 6
+
+  return score
+}
+```
+
+<Note>
+  Similar wallpapers exclude the current wallpaper from results and require a minimum similarity score to appear in recommendations.
+</Note>

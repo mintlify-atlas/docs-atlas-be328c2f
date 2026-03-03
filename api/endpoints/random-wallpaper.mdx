@@ -1,0 +1,166 @@
+---
+title: Get random wallpaper
+description: Retrieve a single random wallpaper with optional filtering by type, category, and color
+---
+
+## GET /api/random-wallpaper
+
+Retrieve a single random wallpaper from WallWidgy's collection. You can filter by device type (desktop/mobile), category, or color to get wallpapers that match your specific needs.
+
+## Query parameters
+
+<ParamField query="type" type="string">
+  Filter by device type. Accepts `desktop` or `mobile`. Desktop wallpapers have landscape orientation, while mobile wallpapers have portrait orientation.
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter by category name. Categories are extracted from wallpaper filenames (e.g., `nature`, `abstract`, `space`).
+</ParamField>
+
+<ParamField query="color" type="string">
+  Filter by primary or secondary color. Use lowercase color names (e.g., `blue`, `red`, `green`).
+</ParamField>
+
+<ParamField query="count" type="number" default="1">
+  Number of random wallpapers to return. Must be between 1 and 10. Defaults to 1.
+</ParamField>
+
+## Response
+
+<ResponseField name="wallpapers" type="array">
+  Array of wallpaper URLs
+  
+  <ResponseField name="[url]" type="string">
+    Full URL to the wallpaper image
+  </ResponseField>
+</ResponseField>
+
+<ResponseField name="count" type="number">
+  Number of wallpapers returned in the response
+</ResponseField>
+
+<ResponseField name="category" type="string">
+  The category filter applied, or `all` if no filter was used
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  The device type filter applied, or `all` if no filter was used
+</ResponseField>
+
+<ResponseField name="color" type="string">
+  The color filter applied, or `all` if no filter was used
+</ResponseField>
+
+## Error responses
+
+<ResponseField name="error" type="string">
+  Error message describing what went wrong
+</ResponseField>
+
+**404 Not Found** - Returned when no wallpapers match the specified filters
+
+**500 Internal Server Error** - Returned when there's a server error
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+# Get a single random wallpaper
+curl https://wallwidgy.com/api/random-wallpaper
+
+# Get a random desktop wallpaper
+curl "https://wallwidgy.com/api/random-wallpaper?type=desktop"
+
+# Get 3 random mobile wallpapers from the nature category
+curl "https://wallwidgy.com/api/random-wallpaper?type=mobile&category=nature&count=3"
+
+# Get a random wallpaper with blue color
+curl "https://wallwidgy.com/api/random-wallpaper?color=blue"
+```
+
+```javascript JavaScript
+// Get a single random wallpaper
+fetch('https://wallwidgy.com/api/random-wallpaper')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Get a random desktop wallpaper
+fetch('https://wallwidgy.com/api/random-wallpaper?type=desktop')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Get 5 random mobile wallpapers from the space category
+const params = new URLSearchParams({
+  type: 'mobile',
+  category: 'space',
+  count: '5'
+});
+
+fetch(`https://wallwidgy.com/api/random-wallpaper?${params}`)
+  .then(response => response.json())
+  .then(data => {
+    console.log(`Got ${data.count} wallpapers`);
+    data.wallpapers.forEach(url => console.log(url));
+  });
+```
+
+```python Python
+import requests
+
+# Get a single random wallpaper
+response = requests.get('https://wallwidgy.com/api/random-wallpaper')
+data = response.json()
+print(data)
+
+# Get a random desktop wallpaper with filters
+params = {
+    'type': 'desktop',
+    'category': 'abstract',
+    'count': '3'
+}
+response = requests.get('https://wallwidgy.com/api/random-wallpaper', params=params)
+data = response.json()
+print(f"Got {data['count']} wallpapers")
+for url in data['wallpapers']:
+    print(url)
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/nature_forest_001.jpg"
+  ],
+  "count": 1,
+  "category": "all",
+  "type": "all",
+  "color": "all"
+}
+```
+
+## Example response with filters
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/space_nebula_desktop_01.jpg",
+    "https://wallwidgy.com/wallpapers/space_galaxy_desktop_03.jpg"
+  ],
+  "count": 2,
+  "category": "space",
+  "type": "desktop",
+  "color": "all"
+}
+```
+
+## Example error response
+
+```json
+{
+  "error": "Category 'invalid' not found"
+}
+```

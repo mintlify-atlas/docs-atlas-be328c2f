@@ -1,0 +1,131 @@
+---
+title: Introduction
+description: A modern, fast wallpaper discovery platform with AI-powered recommendations and comprehensive REST API
+---
+
+# Welcome to WallWidgy
+
+WallWidgy is a modern, fast wallpaper discovery platform that makes finding the perfect wallpaper effortless. With AI-powered recommendations, real-time search, and a comprehensive REST API, WallWidgy delivers high-quality wallpapers optimized for both desktop and mobile devices.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="Fast image delivery" icon="bolt">
+    All wallpapers are served via GitHub CDN with optimized caching (cache/ directory for previews, main/ for full resolution). The platform uses Next.js Image optimization with lazy loading and blur placeholders for instant performance.
+  </Card>
+  
+  <Card title="Real-time search" icon="magnifying-glass">
+    Search through wallpapers by color, style, mood, series, character names, tags, and more. The search indexes metadata fields including art_style, technique, color_palette, primary_colors, and secondary_colors with device filtering (Desktop/Mobile).
+  </Card>
+  
+  <Card title="Smart favorites system" icon="heart">
+    Save your favorite wallpapers with automatic sync between local storage and cloud. Favorites persist across devices when you sign in, with one-click download for all saved wallpapers.
+  </Card>
+  
+  <Card title="AI recommendations" icon="sparkles">
+    Get similar wallpaper suggestions powered by a sophisticated similarity algorithm that analyzes art style, series, character names, color palettes, mood, technique, tags, and categories to find visually related wallpapers.
+  </Card>
+</CardGroup>
+
+## What makes WallWidgy different
+
+### Performance-first architecture
+
+WallWidgy is built with Next.js 16 and optimized for speed:
+
+- **Image optimization**: Dual-format delivery with WebP previews (cache/) and PNG/original formats (main/)
+- **Lazy loading**: Images load as you scroll with IntersectionObserver
+- **Blur placeholders**: Smooth loading experience with blur-up effect
+- **Infinite scroll**: Loads 50 wallpapers initially, then 20 more as you scroll
+- **Device detection**: Faster animations and reduced effects on mobile devices
+
+### Rich metadata search
+
+Every wallpaper includes comprehensive metadata stored in `index.json`:
+
+```json
+{
+  "file_name": "wallpaper-name",
+  "width": 3840,
+  "height": 2160,
+  "resolution": "4K",
+  "orientation": "Desktop",
+  "category": "#anime",
+  "data": {
+    "art_style": "digital painting",
+    "series": "Series Name",
+    "character_names": ["Character 1", "Character 2"],
+    "primary_colors": ["blue", "purple"],
+    "secondary_colors": ["white", "black"],
+    "color_palette": "cool",
+    "mood": "dramatic",
+    "technique": "illustration",
+    "tags": ["action", "fantasy"]
+  }
+}
+```
+
+### Layout flexibility
+
+Choose between two viewing modes:
+
+- **Masonry layout**: Pinterest-style responsive grid that adapts to image dimensions
+- **Grid layout**: Uniform grid with consistent aspect ratios
+
+The platform automatically selects the optimal layout based on your device, but you can manually switch anytime.
+
+### Device-specific filtering
+
+Filter wallpapers by device type:
+
+- **All**: Show all wallpapers
+- **Desktop**: Landscape/wide wallpapers (aspect ratio 3:2 or 16:9)
+- **Mobile**: Portrait wallpapers (aspect ratio 9:16)
+
+## Categories
+
+WallWidgy organizes wallpapers into curated categories:
+
+- Abstract
+- AMOLED
+- Anime
+- Architecture
+- Art
+- Cars
+- Minimal
+- Nature
+- Tech
+
+Each category has a custom icon and displays wallpapers in a responsive masonry grid.
+
+## Technology stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="browser">
+    Built with Next.js 16, React 19, TypeScript, and Tailwind CSS for a modern, type-safe development experience.
+  </Card>
+  
+  <Card title="Storage" icon="database">
+    Wallpapers hosted on GitHub with CDN delivery. Index stored as JSON for fast querying.
+  </Card>
+  
+  <Card title="Authentication" icon="lock">
+    Clerk authentication for user management and cloud favorites sync.
+  </Card>
+  
+  <Card title="API" icon="code">
+    RESTful API with CORS support for third-party integrations.
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get started with WallWidgy in minutes
+  </Card>
+  
+  <Card title="API Reference" icon="book" href="/api/introduction">
+    Integrate WallWidgy's API into your applications
+  </Card>
+</CardGroup>

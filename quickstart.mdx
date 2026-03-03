@@ -1,80 +1,351 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get started with WallWidgy and discover your perfect wallpaper
 ---
 
-## Get started in three steps
+# Get started with WallWidgy
 
-Get your documentation site running locally and make your first customization.
+This guide walks you through the essential features of WallWidgy and shows you how to find, save, and download wallpapers.
 
-### Step 1: Set up your local environment
+## Browse wallpapers
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+<Steps>
+  <Step title="Visit WallWidgy">
+    Navigate to the WallWidgy homepage. You'll see a curated collection of high-quality wallpapers displayed in a masonry layout.
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+    The hero section displays "Wallwidgy" with the tagline "Hand-picked high-quality wallpapers, curated just for you."
+  </Step>
+  
+  <Step title="Filter by device type">
+    Use the device filter in the bottom-left corner to show wallpapers for your device:
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+    - **All**: Browse all available wallpapers
+    - **Desktop**: See only landscape/widescreen wallpapers
+    - **Mobile**: See only portrait wallpapers optimized for phones
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    The filter automatically updates the grid without page reload.
+  </Step>
+  
+  <Step title="Switch layout modes">
+    Choose your preferred viewing layout:
+    
+    - **Masonry**: Pinterest-style grid that adapts to image dimensions
+    - **Grid**: Uniform grid with consistent spacing
+    
+    The layout switcher appears at the top of the wallpaper grid. Mobile devices default to grid layout for better performance.
+  </Step>
+  
+  <Step title="Explore wallpapers">
+    Hover over any wallpaper to reveal:
+    
+    - Wallpaper filename
+    - Resolution badge (1080p, 1440p, 4K, 8K)
+    - Platform indicator (Desktop or Mobile)
+    - Action buttons (Download, Favorite, Share, Expand)
+    
+    Click any wallpaper to open it in fullscreen modal view.
+  </Step>
+</Steps>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+## Search for wallpapers
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+<Steps>
+  <Step title="Open search">
+    Click the floating search button or press `Cmd+K` (Mac) / `Ctrl+K` (Windows/Linux) to open the search overlay.
+    
+    The search button is located at the bottom-center of the page and displays "Search by color, style, mood..."
+  </Step>
+  
+  <Step title="Enter search terms">
+    Search for wallpapers using:
+    
+    - **Colors**: "blue", "purple", "warm", "cool"
+    - **Styles**: "minimalist", "digital painting", "illustration"
+    - **Moods**: "dramatic", "peaceful", "energetic"
+    - **Series**: Anime series names or franchises
+    - **Characters**: Character names from various media
+    - **Tags**: "nature", "abstract", "cityscape"
+    
+    The search queries the wallpaper metadata fields:
+    ```typescript
+    {
+      file_name, art_style, series, category, mood,
+      technique, color_palette, character_names,
+      primary_colors, secondary_colors, tags
+    }
+    ```
+  </Step>
+  
+  <Step title="Filter search results">
+    After searching, use the device filter to narrow results:
+    
+    - All
+    - Desktop
+    - Mobile
+    
+    Results update instantly without re-searching.
+  </Step>
+  
+  <Step title="Try popular searches">
+    Use the suggested searches for inspiration:
+    
+    - Minimalist
+    - Dark
+    - Colorful
+    - Nature
+    - Abstract
+    - Anime
+  </Step>
+</Steps>
 
-### Step 3: Go live
+<Note>
+  Search results load progressively with infinite scroll. The first 20 results appear immediately, with more loading as you scroll.
+</Note>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+## Save favorite wallpapers
+
+<Steps>
+  <Step title="Add to favorites">
+    Click the heart icon on any wallpaper to add it to your favorites. The heart turns red when saved.
+    
+    Favorites are stored in **local storage** for instant access without an account.
+  </Step>
+  
+  <Step title="View your favorites">
+    Click the heart icon in the header navigation to view all saved wallpapers.
+    
+    Your favorites page shows:
+    - All saved wallpapers in masonry layout
+    - Download All button to download all favorites at once
+    - Remove All button to clear favorites
+  </Step>
+  
+  <Step title="Sync across devices (optional)">
+    Sign in with Clerk authentication to sync favorites to the cloud:
+    
+    1. Click "Sign In" in the header
+    2. Complete authentication
+    3. Your local favorites automatically merge with cloud favorites
+    
+    The favorites API (`/api/favorites`) handles syncing:
+    ```typescript
+    // Merge local and cloud favorites
+    const merged = [...new Set([...cloudFavorites, ...localFavorites])]
+    ```
+  </Step>
+  
+  <Step title="Share favorites">
+    Share your favorite collection with others:
+    
+    1. Go to your favorites page
+    2. Click the Share button
+    3. Copy your unique share URL: `/share/[username]`
+    
+    Others can view (but not edit) your shared favorites collection.
+  </Step>
+</Steps>
+
+## Download wallpapers
+
+<Steps>
+  <Step title="Single download">
+    Click the download button on any wallpaper card to download the full-resolution image.
+    
+    Downloads use the original format from the `main/` directory:
+    - PNG files for maximum quality
+    - Original resolution (up to 16K)
+    - Proper file extensions preserved
+  </Step>
+  
+  <Step title="Bulk download">
+    Select multiple wallpapers for batch download:
+    
+    1. Click download icons on multiple wallpapers
+    2. A "Download Selected (X)" button appears at the bottom
+    3. Click to download all selected wallpapers
+    
+    Each file downloads sequentially with proper naming.
+  </Step>
+  
+  <Step title="Download from modal">
+    When viewing a wallpaper in fullscreen:
+    
+    1. Click the download button in the modal footer
+    2. The full-resolution image downloads automatically
+    3. A confirmation notification appears
+  </Step>
+  
+  <Step title="Download all favorites">
+    From the favorites page, click "Download All" to download your entire collection at once.
+  </Step>
+</Steps>
+
+<Warning>
+  Large downloads (4K, 8K, 16K) may take time depending on your connection speed. The download indicator shows progress.
+</Warning>
+
+## Discover similar wallpapers
+
+<Steps>
+  <Step title="Open wallpaper details">
+    Click any wallpaper to open the fullscreen modal.
+  </Step>
+  
+  <Step title="View AI recommendations">
+    The similar wallpapers panel appears at the bottom of the modal, showing up to 10 related wallpapers.
+    
+    The AI analyzes:
+    - Art style (weight: 5 points)
+    - Series name (weight: 10 points)
+    - Character names (weight: 3 points each)
+    - Primary colors (weight: 1.5 points each)
+    - Secondary colors (weight: 0.75 points each)
+    - Color palette (weight: 2 points)
+    - Mood (weight: 2 points)
+    - Technique (weight: 1 point)
+    - Tags (weight: 0.5 points each)
+    - Category (weight: 4 points)
+  </Step>
+  
+  <Step title="Browse more recommendations">
+    Click the "More" button with the refresh icon to see the next set of similar wallpapers.
+    
+    The panel cycles through all matches, returning to the start when reaching the end.
+  </Step>
+  
+  <Step title="Select a recommendation">
+    Click any recommended wallpaper to view it in the modal. The similar wallpapers update to match your new selection.
+  </Step>
+</Steps>
+
+## Browse by category
+
+<Steps>
+  <Step title="Open categories">
+    Click the grid icon in the header navigation to view all categories.
+  </Step>
+  
+  <Step title="Select a category">
+    Choose from:
+    
+    - **Abstract**: Non-representational art and patterns
+    - **AMOLED**: Pure black backgrounds for OLED displays
+    - **Anime**: Characters and scenes from anime series
+    - **Architecture**: Buildings and architectural photography
+    - **Art**: Digital art and illustrations
+    - **Cars**: Automotive photography and renders
+    - **Minimal**: Clean, simple designs
+    - **Nature**: Landscapes and natural photography
+    - **Tech**: Technology, cyberpunk, and futuristic themes
+  </Step>
+  
+  <Step title="Explore category wallpapers">
+    Each category page shows:
+    
+    - Category icon and name
+    - Total wallpaper count
+    - Filtered wallpapers in masonry layout
+    - Same features as home page (search, favorites, download)
+  </Step>
+</Steps>
+
+## Use the API
+
+<Steps>
+  <Step title="Get random wallpapers">
+    Fetch random wallpapers with optional filtering:
+    
+    ```bash
+    # Get 5 random wallpapers
+    curl "https://wallwidgy.com/api/wallpapers?count=5"
+    
+    # Get desktop wallpapers only
+    curl "https://wallwidgy.com/api/wallpapers?type=desktop&count=3"
+    
+    # Get mobile wallpapers from anime category
+    curl "https://wallwidgy.com/api/wallpapers?type=mobile&category=anime&count=10"
+    ```
+  </Step>
+  
+  <Step title="Filter by color">
+    Get wallpapers with specific color palettes:
+    
+    ```bash
+    # Get wallpapers with blue as primary color
+    curl "https://wallwidgy.com/api/wallpapers?color=blue&count=5"
+    
+    # Combine with category filter
+    curl "https://wallwidgy.com/api/wallpapers?color=purple&category=anime&count=3"
+    ```
+  </Step>
+  
+  <Step title="Parse API response">
+    The API returns JSON with wallpaper URLs:
+    
+    ```json
+    {
+      "wallpapers": [
+        "https://wallwidgy.com/wallpapers/image1.png",
+        "https://wallwidgy.com/wallpapers/image2.png"
+      ],
+      "count": 2,
+      "category": "anime",
+      "type": "desktop",
+      "color": "all"
+    }
+    ```
+  </Step>
+  
+  <Step title="Handle CORS">
+    The API includes CORS headers for cross-origin requests:
+    
+    ```
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET
+    Access-Control-Allow-Headers: Content-Type
+    ```
+    
+    You can use the API from any website or application.
+  </Step>
+</Steps>
+
+## Keyboard shortcuts
+
+WallWidgy supports keyboard shortcuts for faster navigation:
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+K` / `Ctrl+K` | Open search |
+| `Esc` | Close search or modal |
+| `←` | Previous wallpaper (in modal) |
+| `→` | Next wallpaper (in modal) |
+
+## Tips for best experience
+
+<Note>
+  **Performance**: The platform detects your device and automatically optimizes animations. Mobile devices get faster, lighter animations for smooth scrolling.
+</Note>
+
+<Note>
+  **Image quality**: Preview images use WebP format from the `cache/` directory. Full downloads use original PNG/source formats from `main/` for maximum quality.
+</Note>
+
+<Note>
+  **Infinite scroll**: Wallpapers load progressively as you scroll. The first 50 load immediately, then 20 more at a time for optimal performance.
+</Note>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="API reference" icon="code" href="/api/introduction">
+    Integrate WallWidgy into your applications
+  </Card>
+  
+  <Card title="Categories" icon="grid" href="/guides/categories">
+    Browse wallpapers by category
+  </Card>
+  
+  <Card title="Categories" icon="grid" href="/guides/categories">
+    Explore all wallpaper categories
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

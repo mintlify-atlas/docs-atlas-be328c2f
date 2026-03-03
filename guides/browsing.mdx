@@ -1,0 +1,123 @@
+---
+title: Browsing wallpapers
+description: Learn how to effectively browse and discover wallpapers on WallWidgy
+---
+
+WallWidgy offers multiple ways to browse and discover the perfect wallpaper for your device. This guide covers all browsing features and workflows.
+
+## Layout options
+
+You can switch between two different layout modes to match your browsing preference:
+
+<Steps>
+  <Step title="Masonry layout">
+    The default layout that creates a Pinterest-style grid with varying heights. This layout is optimized for browsing mixed content (both desktop and mobile wallpapers).
+  </Step>
+  
+  <Step title="Grid layout">
+    A uniform grid with consistent sizing. This layout is automatically selected on mobile devices for better performance.
+  </Step>
+</Steps>
+
+The layout switcher appears at the top of the wallpaper grid on the home page. The platform automatically selects grid layout on mobile devices (screens under 768px) for optimal performance.
+
+## Filter by device type
+
+Located in the bottom-left corner of the screen, you'll find device filter buttons:
+
+- **All**: Shows both desktop and mobile wallpapers
+- **Desktop**: Filters to show only landscape-oriented wallpapers
+- **Mobile**: Filters to show only portrait-oriented wallpapers (9:16 aspect ratio)
+
+<Tip>
+  When you select the mobile filter, the layout automatically switches to masonry mode for better display of portrait wallpapers.
+</Tip>
+
+## Browsing wallpapers
+
+<Steps>
+  <Step title="View wallpaper details">
+    Hover over any wallpaper (desktop) or tap it (mobile) to reveal:
+    - Wallpaper filename
+    - Resolution badge (top-left)
+    - Platform badge (top-right: Desktop/Mobile)
+    - Action buttons (download, favorite, share, expand)
+  </Step>
+  
+  <Step title="Quick actions">
+    Action buttons appear on hover/tap with staggered animations:
+    - **Download**: Select wallpaper for batch download
+    - **Heart**: Add to favorites (turns red when favorited)
+    - **Share**: Share wallpaper link or copy to clipboard
+    - **Expand**: Open full-screen modal view
+  </Step>
+  
+  <Step title="Open modal view">
+    Click anywhere on the wallpaper card (desktop only) or tap the expand button to open the full-screen modal.
+  </Step>
+</Steps>
+
+## Infinite scrolling
+
+WallWidgy uses progressive loading to maintain smooth performance:
+
+- **Initial load**: 50 wallpapers
+- **Subsequent loads**: 20 wallpapers at a time
+- Automatically loads more as you scroll down
+- Loading indicator appears when fetching new wallpapers
+
+<Note>
+  The platform optimizes image loading by showing lower-quality previews first, with higher-quality images loaded in the background.
+</Note>
+
+## Wallpaper information
+
+Each wallpaper card displays:
+
+### Resolution badges
+Shown in the top-left corner with a yellow background:
+- 1080p, 1440p, 4K, 8K labels for common resolutions
+- Exact dimensions (e.g., "3840 x 2160") for non-standard sizes
+
+### Platform badges
+Shown in the top-right corner:
+- **Desktop**: Landscape-oriented wallpapers
+- **Mobile**: Portrait-oriented wallpapers (9:16 aspect ratio)
+
+## Batch downloading
+
+<Steps>
+  <Step title="Select wallpapers">
+    Click the download button on any wallpaper card. The button turns yellow when selected.
+  </Step>
+  
+  <Step title="Download selected">
+    A floating button appears at the bottom center showing the count of selected wallpapers.
+  </Step>
+  
+  <Step title="Initiate download">
+    Click the "Download Selected (X)" button to download all selected wallpapers at once.
+  </Step>
+</Steps>
+
+<Tip>
+  You'll see a notification showing "Your wallpapers are now downloading..." followed by individual download confirmations.
+</Tip>
+
+## Back to top button
+
+When you scroll down, a "Back to Top" button appears in the bottom-right corner. Click it to smoothly scroll back to the top of the page.
+
+## Performance optimizations
+
+WallWidgy includes several performance features:
+
+- **Lazy loading**: Images load only when they're about to enter the viewport
+- **Image optimization**: Automatic format selection (WebP for cache, various formats for originals)
+- **Responsive sizing**: Different image sizes served based on screen width
+- **Hardware acceleration**: Smooth animations using GPU acceleration
+- **Mobile optimizations**: Faster animations (200ms vs 600ms) and reduced effects on mobile devices
+
+<Note>
+  On mobile devices, hover effects are simplified and animation durations are reduced to ensure smooth 60fps performance.
+</Note>

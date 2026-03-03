@@ -1,0 +1,125 @@
+---
+title: Real-time search
+description: Search through thousands of wallpapers instantly with advanced filtering and device-specific results
+---
+
+# Real-time search
+
+WallWidgy's real-time search lets you find the perfect wallpaper instantly by searching through comprehensive metadata including colors, art styles, moods, series, characters, and more.
+
+## How search works
+
+The search functionality indexes every wallpaper with rich metadata stored in `index.json`:
+
+<CardGroup cols={2}>
+  <Card title="Metadata fields" icon="database">
+    Search across art_style, technique, color_palette, primary_colors, secondary_colors, mood, series, character names, and tags
+  </Card>
+  
+  <Card title="Device filtering" icon="mobile">
+    Filter results by Desktop or Mobile orientation while searching
+  </Card>
+  
+  <Card title="Instant results" icon="bolt">
+    Results appear as you type with no server requests - all searching happens client-side
+  </Card>
+  
+  <Card title="Visual previews" icon="image">
+    See thumbnail previews of matching wallpapers before opening them
+  </Card>
+</CardGroup>
+
+## Using search
+
+<Steps>
+  <Step title="Open search">
+    Click the search icon in the header or press `Cmd+K` (Mac) / `Ctrl+K` (Windows/Linux) to open the search overlay
+  </Step>
+  
+  <Step title="Type your query">
+    Start typing to see instant results. Search for colors, styles, moods, series names, or any metadata field
+  </Step>
+  
+  <Step title="Filter by device">
+    Use the device filter buttons (All/Desktop/Mobile) to show only wallpapers optimized for your target device
+  </Step>
+  
+  <Step title="Browse results">
+    Scroll through results with infinite loading - the first 20 results load instantly, with more loading as you scroll
+  </Step>
+</Steps>
+
+## Popular search queries
+
+<AccordionGroup>
+  <Accordion title="Color-based searches">
+    - **Minimalist** - Clean, simple designs with limited color palettes
+    - **Dark** - Dark themes and low-light wallpapers
+    - **Colorful** - Vibrant, multi-color designs
+    - **Blue**, **Red**, **Green** - Specific color themes
+  </Accordion>
+  
+  <Accordion title="Style-based searches">
+    - **Abstract** - Non-representational art
+    - **Anime** - Japanese animation style
+    - **Nature** - Natural landscapes and scenes
+    - **Minimal** - Minimalist design aesthetic
+  </Accordion>
+  
+  <Accordion title="Mood-based searches">
+    - **Calm** - Peaceful, relaxing wallpapers
+    - **Energetic** - Dynamic, vibrant designs
+    - **Professional** - Clean, business-appropriate wallpapers
+  </Accordion>
+  
+  <Accordion title="Technical searches">
+    - **4K** - Ultra high-resolution wallpapers
+    - **Portrait** - Vertical orientation (mobile)
+    - **Landscape** - Horizontal orientation (desktop)
+  </Accordion>
+</AccordionGroup>
+
+## Search suggestions
+
+The search bar shows popular suggestions before you type:
+
+- Minimalist
+- Dark
+- Colorful
+- Nature
+- Abstract
+- Anime
+
+Click any suggestion to instantly see matching wallpapers.
+
+## Device filtering
+
+Toggle between device types to find wallpapers optimized for your needs:
+
+- **All** - Show all wallpapers regardless of orientation
+- **Desktop** - Only horizontal/landscape wallpapers (width > height)
+- **Mobile** - Only vertical/portrait wallpapers (height > width)
+
+The filter applies in real-time as you search, with visual indicators showing each wallpaper's platform.
+
+## Keyboard shortcuts
+
+<Note>
+  - `Cmd/Ctrl + K` - Open search
+  - `Esc` - Close search
+  - `Arrow keys` - Navigate results
+  - `Enter` - Open selected wallpaper
+</Note>
+
+## Performance
+
+Search is optimized for speed:
+
+- **No server requests** - All metadata is loaded once and cached
+- **Incremental loading** - First 20 results load instantly
+- **Infinite scroll** - Additional results load as you scroll
+- **Visual feedback** - Loading states and smooth animations
+
+<Tip>
+  Search is case-insensitive and matches partial terms. Try searching for part of a word or color name to find variations.
+</Tip>

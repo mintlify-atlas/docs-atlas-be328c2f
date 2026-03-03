@@ -1,0 +1,232 @@
+---
+title: Search wallpapers
+description: Search for wallpapers using text queries
+---
+
+## GET /api/wallpapers/search
+
+Search for wallpapers using text-based queries. This endpoint allows you to find wallpapers by searching through their metadata, tags, and descriptions.
+
+<Warning>
+  This endpoint is currently under development. The route file exists but has no implementation yet. Check back later for full search functionality.
+</Warning>
+
+## Planned features
+
+When implemented, this endpoint will support:
+
+### Query parameters
+
+<ParamField query="q" type="string" required>
+  Search query string. Will search through wallpaper names, tags, categories, and descriptions.
+</ParamField>
+
+<ParamField query="type" type="string">
+  Filter search results by device type (`desktop` or `mobile`)
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter search results by category
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Maximum number of results to return
+</ParamField>
+
+<ParamField query="offset" type="number" default="0">
+  Number of results to skip (for pagination)
+</ParamField>
+
+### Expected response format
+
+<ResponseField name="results" type="array">
+  Array of matching wallpapers
+  
+  <ResponseField name="[].public_id" type="string">
+    Unique identifier for the wallpaper
+  </ResponseField>
+  
+  <ResponseField name="[].name" type="string">
+    Name of the wallpaper
+  </ResponseField>
+  
+  <ResponseField name="[].url" type="string">
+    URL to the wallpaper image
+  </ResponseField>
+  
+  <ResponseField name="[].category" type="string">
+    Category the wallpaper belongs to
+  </ResponseField>
+  
+  <ResponseField name="[].tags" type="array">
+    Tags associated with the wallpaper
+  </ResponseField>
+  
+  <ResponseField name="[].relevance" type="number">
+    Relevance score (0-1) indicating how well the wallpaper matches the query
+  </ResponseField>
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  Total number of results matching the query
+</ResponseField>
+
+<ResponseField name="limit" type="number">
+  Maximum number of results per page
+</ResponseField>
+
+<ResponseField name="offset" type="number">
+  Current offset in the result set
+</ResponseField>
+
+## Alternative endpoints
+
+Until search is implemented, you can use these alternative approaches:
+
+### Filter by category
+
+Use the [/api/wallpapers](/api/endpoints/wallpapers) endpoint with the `category` parameter:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=nature&count=10"
+```
+
+### Filter by color
+
+Use the [/api/wallpapers](/api/endpoints/wallpapers) endpoint with the `color` parameter:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?color=blue&count=10"
+```
+
+### Combine filters
+
+Combine multiple filters to narrow down results:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=space&color=blue&type=desktop&count=5"
+```
+
+## Example usage (planned)
+
+Once implemented, you'll be able to search like this:
+
+<CodeGroup>
+
+```bash cURL
+# Basic search
+curl "https://wallwidgy.com/api/wallpapers/search?q=mountain"
+
+# Search with type filter
+curl "https://wallwidgy.com/api/wallpapers/search?q=sunset&type=desktop"
+
+# Search with pagination
+curl "https://wallwidgy.com/api/wallpapers/search?q=ocean&limit=10&offset=20"
+
+# Search with multiple filters
+curl "https://wallwidgy.com/api/wallpapers/search?q=nature&type=mobile&category=landscape&limit=5"
+```
+
+```javascript JavaScript
+// Basic search
+const query = 'mountain sunset';
+fetch(`https://wallwidgy.com/api/wallpapers/search?q=${encodeURIComponent(query)}`)
+  .then(response => response.json())
+  .then(data => {
+    console.log(`Found ${data.total} results`);
+    data.results.forEach(wallpaper => {
+      console.log(`${wallpaper.name} - Relevance: ${wallpaper.relevance}`);
+    });
+  });
+
+// Search with filters and pagination
+const params = new URLSearchParams({
+  q: 'space nebula',
+  type: 'desktop',
+  limit: '20',
+  offset: '0'
+});
+
+fetch(`https://wallwidgy.com/api/wallpapers/search?${params}`)
+  .then(response => response.json())
+  .then(data => {
+    console.log(`Page 1: Showing ${data.results.length} of ${data.total} results`);
+  });
+```
+
+```python Python
+import requests
+from urllib.parse import urlencode
+
+# Basic search
+params = {'q': 'mountain'}
+response = requests.get('https://wallwidgy.com/api/wallpapers/search', params=params)
+data = response.json()
+
+print(f"Found {data['total']} results")
+for wallpaper in data['results']:
+    print(f"{wallpaper['name']} - {wallpaper['category']}")
+
+# Search with pagination
+params = {
+    'q': 'forest',
+    'type': 'mobile',
+    'limit': 10,
+    'offset': 0
+}
+
+while True:
+    response = requests.get('https://wallwidgy.com/api/wallpapers/search', params=params)
+    data = response.json()
+    
+    for wallpaper in data['results']:
+        print(wallpaper['url'])
+    
+    if len(data['results']) < params['limit']:
+        break
+    
+    params['offset'] += params['limit']
+```
+
+</CodeGroup>
+
+## Example response (planned)
+
+```json
+{
+  "results": [
+    {
+      "public_id": "wallpapers/mountain_sunset_4k",
+      "name": "mountain_sunset_4k",
+      "url": "https://wallwidgy.com/wallpapers/mountain_sunset_4k.jpg",
+      "category": "nature",
+      "tags": ["mountain", "sunset", "landscape", "desktop"],
+      "relevance": 0.95
+    },
+    {
+      "public_id": "wallpapers/mountain_lake_morning",
+      "name": "mountain_lake_morning",
+      "url": "https://wallwidgy.com/wallpapers/mountain_lake_morning.jpg",
+      "category": "nature",
+      "tags": ["mountain", "lake", "morning", "desktop"],
+      "relevance": 0.87
+    }
+  ],
+  "total": 45,
+  "limit": 20,
+  "offset": 0
+}
+```
+
+## Implementation status
+
+The search endpoint route file exists at `/api/wallpapers/search/route.ts` but is currently empty. We're working on implementing comprehensive search functionality that will include:
+
+- Full-text search across wallpaper metadata
+- Fuzzy matching for typo tolerance
+- Relevance scoring
+- Search result ranking
+- Search suggestions and autocomplete
+- Advanced filtering and sorting options
+
+Check the [GitHub repository](https://github.com/wallwidgy/wallwidgy) for updates on search implementation progress.

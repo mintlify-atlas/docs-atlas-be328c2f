@@ -1,0 +1,289 @@
+---
+title: "Rate limits"
+description: "Fair usage guidelines and parameter limits for the WallWidgy API"
+---
+
+## Fair usage policy
+
+The WallWidgy API is free and public, requiring no authentication. We trust developers to use the API responsibly and sustainably.
+
+Our fair usage policy is designed to:
+
+- Ensure the API remains available and performant for everyone
+- Prevent abuse and excessive resource consumption
+- Encourage efficient API usage patterns
+
+<Info>
+  There are no hard rate limits currently enforced, but we monitor usage patterns and may implement restrictions if needed to protect service quality.
+</Info>
+
+## Count parameter limits
+
+Most API endpoints accept a `count` parameter to specify how many wallpapers to retrieve. This parameter has the following constraints:
+
+### Wallpapers endpoint
+
+**Maximum count:** 10 wallpapers per request
+
+```bash
+# Valid - requests 5 wallpapers
+curl "https://your-site.vercel.app/api/wallpapers?count=5"
+
+# Clamped to 10 - requesting 20 will return only 10
+curl "https://your-site.vercel.app/api/wallpapers?count=20"
+
+# Default - omitting count returns 1 wallpaper
+curl "https://your-site.vercel.app/api/wallpapers"
+```
+
+The API automatically clamps the `count` parameter:
+
+- **Minimum:** 1
+- **Maximum:** 10
+- **Default:** 1 (when not specified)
+
+If you request more than 10 wallpapers, the API returns 10 without error.
+
+<Warning>
+  Requesting the maximum count repeatedly in quick succession may trigger rate limiting in the future. Only request as many wallpapers as your application needs.
+</Warning>
+
+### Random wallpaper endpoint
+
+The `/api/random-wallpaper` endpoint returns a single wallpaper and does not accept a `count` parameter. Use `/api/wallpapers?count=N` if you need multiple wallpapers.
+
+## Request best practices
+
+Follow these guidelines to use the API efficiently:
+
+### 1. Request only what you need
+
+Don't request more wallpapers than your application will display:
+
+```javascript
+// Good - request only what you'll use
+fetch('https://your-site.vercel.app/api/wallpapers?count=3')
+
+// Bad - requesting maximum every time
+fetch('https://your-site.vercel.app/api/wallpapers?count=10')
+```
+
+### 2. Implement caching
+
+Cache API responses to avoid redundant requests:
+
+<CodeGroup>
+
+```javascript Browser Storage
+// Cache in localStorage
+function getCachedWallpapers(type, category) {
+  const cacheKey = `wallpapers_${type}_${category}`;
+  const cached = localStorage.getItem(cacheKey);
+  
+  if (cached) {
+    const { data, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    
+    // Cache for 1 hour
+    if (age < 3600000) {
+      return data;
+    }
+  }
+  
+  return null;
+}
+
+function setCachedWallpapers(type, category, data) {
+  const cacheKey = `wallpapers_${type}_${category}`;
+  localStorage.setItem(cacheKey, JSON.stringify({
+    data,
+    timestamp: Date.now()
+  }));
+}
+```
+
+```javascript In-Memory Cache
+// Simple in-memory cache with TTL
+class WallpaperCache {
+  constructor(ttl = 3600000) {
+    this.cache = new Map();
+    this.ttl = ttl;
+  }
+  
+  get(key) {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    
+    if (Date.now() - entry.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return entry.data;
+  }
+  
+  set(key, data) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+  }
+}
+
+const cache = new WallpaperCache();
+```
+
+</CodeGroup>
+
+### 3. Use filters to reduce results
+
+Filter wallpapers by type, category, or color to get exactly what you need:
+
+```bash
+# Good - specific filtering
+curl "https://your-site.vercel.app/api/wallpapers?type=desktop&category=nature&count=3"
+
+# Less efficient - fetching everything and filtering client-side
+curl "https://your-site.vercel.app/api/wallpapers?count=10"
+```
+
+### 4. Implement exponential backoff
+
+If you receive errors, implement exponential backoff before retrying:
+
+```javascript
+async function fetchWithRetry(url, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url);
+      
+      if (response.ok) {
+        return await response.json();
+      }
+      
+      // If error, wait before retrying
+      const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+    }
+  }
+}
+```
+
+## Response times
+
+The API typically responds within:
+
+- **Wallpapers endpoint:** 200-500ms
+- **Colors endpoint:** 300-800ms (fetches from GitHub)
+- **Random wallpaper:** 200-400ms
+
+Response times may vary based on:
+
+- Network latency
+- Server load
+- Number of wallpapers requested
+- Filter complexity
+
+<Tip>
+  If you experience consistently slow responses, consider caching results or reducing the `count` parameter.
+</Tip>
+
+## Future rate limits
+
+While there are no enforced rate limits currently, we reserve the right to implement restrictions if usage patterns indicate abuse. Potential future limits may include:
+
+- **Requests per minute:** Maximum requests from a single IP
+- **Requests per hour:** Longer-term usage caps
+- **Bandwidth limits:** Restrictions on data transfer
+
+We'll provide advance notice before implementing any hard rate limits.
+
+## What counts as fair usage?
+
+Fair usage means:
+
+<AccordionGroup>
+  <Accordion title="✓ Reasonable request frequency">
+    Making requests only when needed by your application, not continuously polling the API.
+  </Accordion>
+  
+  <Accordion title="✓ Appropriate count parameters">
+    Requesting only the number of wallpapers your application will display or use.
+  </Accordion>
+  
+  <Accordion title="✓ Response caching">
+    Caching API responses to avoid redundant requests for the same data.
+  </Accordion>
+  
+  <Accordion title="✓ Error handling">
+    Implementing proper error handling and backoff strategies instead of rapid retries.
+  </Accordion>
+</AccordionGroup>
+
+## What is considered abuse?
+
+The following patterns may be considered abusive:
+
+<Warning>
+  - Extremely high request volumes (hundreds of requests per minute)
+  - Continuous polling or scraping of all wallpapers
+  - Deliberately bypassing count limits through repeated requests
+  - Using the API to create a competing wallpaper service
+  - Automated scripts that generate excessive load
+</Warning>
+
+If you have a use case requiring higher limits, please contact the project maintainers to discuss options.
+
+## Monitoring your usage
+
+To ensure you're using the API fairly:
+
+1. **Log your API calls** during development to understand usage patterns
+2. **Monitor response times** to ensure you're not overwhelming the API
+3. **Track cache hit rates** to verify caching is working effectively
+4. **Review error rates** to identify potential issues
+
+```javascript
+// Example: Simple usage tracking
+class APIUsageTracker {
+  constructor() {
+    this.requests = [];
+  }
+  
+  track(endpoint) {
+    this.requests.push({
+      endpoint,
+      timestamp: Date.now()
+    });
+  }
+  
+  getStats(windowMs = 60000) {
+    const now = Date.now();
+    const recent = this.requests.filter(
+      req => now - req.timestamp < windowMs
+    );
+    
+    return {
+      count: recent.length,
+      rate: recent.length / (windowMs / 60000) // requests per minute
+    };
+  }
+}
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+
+<Card title="API overview" icon="book" href="/api/introduction">
+  Learn about the API and available endpoints
+</Card>
+
+<Card title="Examples" icon="code" href="/api/guides/examples">
+  See complete implementation examples
+</Card>
+
+</CardGroup>

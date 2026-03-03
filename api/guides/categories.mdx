@@ -1,0 +1,396 @@
+---
+title: Available categories
+description: Explore all wallpaper categories and learn how to filter by them
+---
+
+## Overview
+
+WallWidgy organizes wallpapers into categories to help you find the perfect image for your needs. Use the `category` query parameter to filter wallpapers by theme.
+
+## Available categories
+
+The API currently supports these categories:
+
+<CardGroup cols={3}>
+  <Card title="Abstract" icon="shapes">
+    Geometric patterns, abstract art, and non-representational designs
+  </Card>
+  <Card title="Amoled" icon="mobile">
+    Pure black backgrounds optimized for AMOLED screens
+  </Card>
+  <Card title="Anime" icon="wand-sparkles">
+    Japanese animation characters and scenes
+  </Card>
+  <Card title="Architecture" icon="building">
+    Buildings, structures, and architectural photography
+  </Card>
+  <Card title="Art" icon="palette">
+    Artistic illustrations, digital art, and paintings
+  </Card>
+  <Card title="Cars" icon="car">
+    Vehicles, automobiles, and automotive photography
+  </Card>
+  <Card title="Minimal" icon="square">
+    Simple, clean designs with minimal elements
+  </Card>
+  <Card title="Nature" icon="tree">
+    Landscapes, wildlife, plants, and natural scenery
+  </Card>
+  <Card title="Tech" icon="microchip">
+    Technology, gadgets, and futuristic themes
+  </Card>
+</CardGroup>
+
+## Basic usage
+
+### Fetch by category
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=anime"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=anime'
+);
+const data = await response.json();
+console.log(data.wallpapers);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'category': 'anime'}
+)
+wallpapers = response.json()['wallpapers']
+```
+
+</CodeGroup>
+
+## Category examples
+
+### Abstract wallpapers
+
+Geometric patterns and abstract designs:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=abstract&count=5"
+```
+
+### AMOLED wallpapers
+
+Perfect for OLED/AMOLED displays with deep blacks:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=amoled"
+```
+
+### Anime wallpapers
+
+Japanese animation art:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=anime&count=10"
+```
+
+### Architecture wallpapers
+
+Buildings and structures:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=architecture"
+```
+
+### Art wallpapers
+
+Digital art and illustrations:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=art&count=3"
+```
+
+### Car wallpapers
+
+Vehicles and automotive photography:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=cars"
+```
+
+### Minimal wallpapers
+
+Clean and simple designs:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=minimal"
+```
+
+### Nature wallpapers
+
+Landscapes and natural scenery:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=nature&count=5"
+```
+
+### Tech wallpapers
+
+Technology and futuristic themes:
+
+```bash
+curl "https://wallwidgy.com/api/wallpapers?category=tech"
+```
+
+## Combining with other filters
+
+### Category + device type
+
+Get mobile anime wallpapers:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=anime&type=mobile"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=anime&type=mobile'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'category': 'anime', 'type': 'mobile'}
+)
+```
+
+</CodeGroup>
+
+### Category + color
+
+Get blue nature wallpapers:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=nature&color=blue"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=nature&color=blue'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'category': 'nature', 'color': 'blue'}
+)
+```
+
+</CodeGroup>
+
+### Category + color + device type
+
+Get desktop minimal wallpapers with black color:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=minimal&color=black&type=desktop"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=minimal&color=black&type=desktop'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={
+        'category': 'minimal',
+        'color': 'black',
+        'type': 'desktop'
+    }
+)
+```
+
+</CodeGroup>
+
+## Response format
+
+The response includes the category in the metadata:
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/wallpapers_abc123.webp",
+    "https://wallwidgy.com/wallpapers/wallpapers_xyz789.webp"
+  ],
+  "count": 2,
+  "category": "anime",
+  "type": "all",
+  "color": "all"
+}
+```
+
+## Error handling
+
+If you request a category that doesn't exist:
+
+```json
+{
+  "error": "Category 'fantasy' not found"
+}
+```
+
+<Note>
+  Category names are case-insensitive. Both `anime` and `Anime` work the same way.
+</Note>
+
+## Practical examples
+
+### Category selector app
+
+```javascript
+const categories = [
+  'abstract', 'amoled', 'anime', 'architecture',
+  'art', 'cars', 'minimal', 'nature', 'tech'
+];
+
+async function fetchByCategory(category, count = 5) {
+  if (!categories.includes(category.toLowerCase())) {
+    throw new Error(`Invalid category: ${category}`);
+  }
+  
+  const response = await fetch(
+    `https://wallwidgy.com/api/wallpapers?category=${category}&count=${count}`
+  );
+  
+  return await response.json();
+}
+
+// Usage
+const animeWallpapers = await fetchByCategory('anime', 10);
+console.log(animeWallpapers);
+```
+
+### Random category wallpaper
+
+```python
+import requests
+import random
+
+CATEGORIES = [
+    'abstract', 'amoled', 'anime', 'architecture',
+    'art', 'cars', 'minimal', 'nature', 'tech'
+]
+
+def get_random_category_wallpaper():
+    """Fetch a random wallpaper from a random category"""
+    category = random.choice(CATEGORIES)
+    
+    response = requests.get(
+        'https://wallwidgy.com/api/wallpapers',
+        params={'category': category, 'count': 1}
+    )
+    
+    data = response.json()
+    return {
+        'category': data['category'],
+        'wallpaper': data['wallpapers'][0]
+    }
+
+# Usage
+result = get_random_category_wallpaper()
+print(f"Random {result['category']} wallpaper: {result['wallpaper']}")
+```
+
+### Category batch fetcher
+
+```javascript
+async function fetchMultipleCategories(categories, countPerCategory = 3) {
+  const promises = categories.map(category =>
+    fetch(
+      `https://wallwidgy.com/api/wallpapers?category=${category}&count=${countPerCategory}`
+    ).then(res => res.json())
+  );
+  
+  const results = await Promise.all(promises);
+  
+  return results.reduce((acc, data, index) => {
+    acc[categories[index]] = data.wallpapers;
+    return acc;
+  }, {});
+}
+
+// Usage
+const wallpapers = await fetchMultipleCategories(['anime', 'nature', 'tech'], 5);
+console.log(wallpapers);
+// {
+//   anime: [...5 wallpapers],
+//   nature: [...5 wallpapers],
+//   tech: [...5 wallpapers]
+// }
+```
+
+## Category metadata
+
+Here's what you can expect from each category:
+
+| Category | Typical Colors | Best For | Device Type |
+|----------|---------------|----------|-------------|
+| Abstract | Varied | Creative displays | Both |
+| AMOLED | Black, dark | Battery saving | Mobile |
+| Anime | Vibrant, varied | Fans of Japanese animation | Both |
+| Architecture | Gray, blue, brown | Professional look | Desktop |
+| Art | Varied | Creative expression | Both |
+| Cars | Red, black, silver | Automotive enthusiasts | Desktop |
+| Minimal | White, black, gray | Clean aesthetic | Both |
+| Nature | Green, blue, brown | Calming atmosphere | Both |
+| Tech | Blue, cyan, black | Modern/futuristic look | Both |
+
+## Best practices
+
+1. **Use valid categories** - Check the list above for supported categories
+2. **Combine with device type** - Get category wallpapers optimized for your device
+3. **Combine with colors** - Narrow down results to match your theme
+4. **Request multiple wallpapers** - Use `count` parameter to get variety
+
+<Tip>
+  The `amoled` category is perfect for OLED/AMOLED displays as it features pure black backgrounds that save battery and look stunning on these screens.
+</Tip>
+
+## Popular combinations
+
+```bash
+# Mobile AMOLED anime wallpapers
+curl "https://wallwidgy.com/api/wallpapers?category=amoled&type=mobile&count=5"
+
+# Desktop nature wallpapers with blue tones
+curl "https://wallwidgy.com/api/wallpapers?category=nature&color=blue&type=desktop&count=3"
+
+# Minimal black wallpapers
+curl "https://wallwidgy.com/api/wallpapers?category=minimal&color=black&count=10"
+
+# Tech wallpapers for mobile
+curl "https://wallwidgy.com/api/wallpapers?category=tech&type=mobile&count=5"
+```

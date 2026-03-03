@@ -1,0 +1,271 @@
+---
+title: Combining filters
+description: Learn how to combine multiple query parameters to fetch exactly the wallpapers you need
+---
+
+## Overview
+
+The WallWidgy API allows you to combine multiple filters to narrow down your wallpaper results. You can filter by category, color, device type, and control the number of results returned.
+
+## Available query parameters
+
+All filters are optional and can be combined:
+
+- `category` - Filter by wallpaper category (anime, art, nature, etc.)
+- `color` - Filter by primary or secondary color
+- `type` - Filter by device type (desktop or mobile)
+- `count` - Number of random wallpapers to return (1-10, default: 1)
+
+## Basic filtering
+
+### Single filter examples
+
+<CodeGroup>
+
+```bash Category only
+curl "https://wallwidgy.com/api/wallpapers?category=anime"
+```
+
+```bash Color only
+curl "https://wallwidgy.com/api/wallpapers?color=blue"
+```
+
+```bash Device type only
+curl "https://wallwidgy.com/api/wallpapers?type=mobile"
+```
+
+```bash Count only
+curl "https://wallwidgy.com/api/wallpapers?count=5"
+```
+
+</CodeGroup>
+
+## Combining multiple filters
+
+### Category + device type
+
+Get mobile wallpapers from a specific category:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=nature&type=mobile"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=nature&type=mobile'
+);
+const data = await response.json();
+console.log(data.wallpapers);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'category': 'nature', 'type': 'mobile'}
+)
+wallpapers = response.json()['wallpapers']
+```
+
+</CodeGroup>
+
+### Category + color
+
+Find wallpapers in a specific category with a certain color:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=art&color=blue"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=art&color=blue'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'category': 'art', 'color': 'blue'}
+)
+```
+
+</CodeGroup>
+
+### Color + device type
+
+Get desktop wallpapers with a specific color:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?color=black&type=desktop"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?color=black&type=desktop'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'color': 'black', 'type': 'desktop'}
+)
+```
+
+</CodeGroup>
+
+## Triple and quad filtering
+
+### Category + color + device type
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=anime&color=blue&type=mobile"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=anime&color=blue&type=mobile'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={
+        'category': 'anime',
+        'color': 'blue',
+        'type': 'mobile'
+    }
+)
+```
+
+</CodeGroup>
+
+### All filters combined
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?category=nature&color=green&type=desktop&count=5"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?category=nature&color=green&type=desktop&count=5'
+);
+const data = await response.json();
+console.log(`Got ${data.count} wallpapers`);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={
+        'category': 'nature',
+        'color': 'green',
+        'type': 'desktop',
+        'count': 5
+    }
+)
+data = response.json()
+print(f"Got {data['count']} wallpapers")
+```
+
+</CodeGroup>
+
+## Response structure
+
+When you combine filters, the API returns:
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/wallpapers_abc123.webp",
+    "https://wallwidgy.com/wallpapers/wallpapers_xyz789.webp"
+  ],
+  "count": 2,
+  "category": "nature",
+  "type": "desktop",
+  "color": "green"
+}
+```
+
+<Note>
+  The API returns the actual filter values applied in the response, making it easy to verify which filters were used.
+</Note>
+
+## Filter behavior
+
+### Filter precedence
+
+Filters are applied in this order:
+1. Category filter (if specified)
+2. Color filter (if specified)
+3. Device type filter (if specified)
+4. Random selection based on count
+
+### Empty results
+
+If no wallpapers match your filter combination, you'll receive a 404 error:
+
+```json
+{
+  "error": "No wallpapers found with color 'purple'"
+}
+```
+
+<Tip>
+  Start with broader filters and add more specific ones. For example, first try `category=anime`, then add `&color=blue`, then `&type=mobile`.
+</Tip>
+
+### Fallback behavior
+
+If a device type filter returns no results, the API falls back to showing all types within the other filters (category and color).
+
+## Best practices
+
+1. **Start broad, then narrow** - Begin with one or two filters, then add more
+2. **Check response count** - The API tells you how many wallpapers matched
+3. **Use valid values** - See the [categories](/api/guides/categories) and [colors](/api/guides/colors) guides for valid values
+4. **URL encode parameters** - Always encode special characters in URLs
+
+## URL encoding examples
+
+When using filters with special characters, make sure to URL encode them:
+
+<CodeGroup>
+
+```bash Correct
+curl "https://wallwidgy.com/api/wallpapers?category=anime&color=blue"
+```
+
+```bash With encoding
+curl "https://wallwidgy.com/api/wallpapers?category=anime%20art&color=light%20blue"
+```
+
+</CodeGroup>
+
+<Tip>
+  Most HTTP libraries (like `fetch` in JavaScript or `requests` in Python) handle URL encoding automatically when you pass parameters as an object.
+</Tip>

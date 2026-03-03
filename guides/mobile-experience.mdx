@@ -1,0 +1,260 @@
+---
+title: Mobile experience
+description: Mobile-specific features, gestures, and optimizations in WallWidgy
+---
+
+WallWidgy is fully optimized for mobile devices with touch-friendly interactions, performance enhancements, and mobile-specific features.
+
+## Mobile detection
+
+The platform automatically detects mobile devices:
+
+- **Breakpoint**: Screens under 768px width
+- **Auto-layout**: Grid layout selected by default on mobile
+- **Touch optimizations**: All interactions support touch gestures
+- **Performance mode**: Faster animations and reduced effects
+
+## Touch interactions
+
+### Wallpaper cards
+
+<Steps>
+  <Step title="Tap to reveal actions">
+    Tap any wallpaper card to reveal action buttons:
+    - Download (select for batch download)
+    - Heart (favorite)
+    - Share (native share or copy link)
+    - Expand (open modal)
+  </Step>
+  
+  <Step title="Quick download">
+    The download button is always visible on mobile (no hover required) for immediate access.
+  </Step>
+  
+  <Step title="View full screen">
+    Tap the expand button or tap anywhere on the card to open the full-screen modal.
+  </Step>
+</Steps>
+
+### Modal gestures
+
+<Accordion title="Zoom and pan">
+  In the wallpaper modal:
+  - **Pinch to zoom**: Use two fingers to zoom in/out (1x to 3x)
+  - **Touch and drag**: When zoomed in, drag to pan around the image
+  - **Double-tap**: Not implemented (single tap opens actions)
+</Accordion>
+
+<Accordion title="Navigation">
+  - **Swipe**: Swipe left/right to navigate between wallpapers (when available)
+  - **Back button**: Tap the back button or use device back gesture
+  - **Close modal**: Tap outside the image or use the close button
+</Accordion>
+
+## Browser back button support
+
+WallWidgy implements intelligent back button handling:
+
+### Priority system
+Back button actions are prioritized:
+1. **Priority 2**: Wallpaper modal (highest)
+2. **Priority 1**: Search overlay
+3. **Priority 0**: Other modals
+
+### Back button behavior
+
+<Steps>
+  <Step title="In search overlay">
+    Device back button closes the search overlay without navigating away from the page.
+  </Step>
+  
+  <Step title="In wallpaper modal">
+    Back button closes the modal and returns to the grid view.
+  </Step>
+  
+  <Step title="Viewing similar wallpapers">
+    If similar wallpapers are shown, back button closes that panel first.
+  </Step>
+  
+  <Step title="Viewing recommended wallpaper">
+    If you're viewing a recommended wallpaper from similar suggestions, back button returns to the original wallpaper.
+  </Step>
+</Steps>
+
+<Tip>
+  The back button integration uses browser history API to prevent unwanted page navigation, keeping you in your browsing flow.
+</Tip>
+
+## Mobile-specific UI
+
+### Search button
+- **Position**: Fixed bottom-right corner
+- **Size**: Larger touch target (3.5rem padding)
+- **Icon only**: No text label on mobile
+- **Keyboard shortcut hidden**: Cmd/Ctrl+K badge not shown on mobile
+
+### Filter buttons
+- **Position**: Fixed bottom-left corner
+- **Compact design**: Smaller padding and text
+- **Rounded pills**: Easy to tap device filters
+
+### Navigation header
+- **Fixed position**: Stays at top during scroll
+- **Backdrop blur**: Semi-transparent with blur effect
+- **Compact layout**: Optimized spacing for mobile screens
+
+### Modal view
+- **Full screen**: Wallpaper modal uses entire viewport on mobile
+- **No rounded corners**: Fills edge-to-edge
+- **Optimized controls**: Larger touch targets for zoom and navigation buttons
+
+## Performance optimizations
+
+### Animation tuning
+
+```javascript
+// Desktop: 600ms animations
+// Mobile: 200ms animations
+```
+
+All animations are 3x faster on mobile for snappier interactions.
+
+### Image loading
+
+<Accordion title="Progressive loading">
+  - **Preview images first**: Low-resolution WebP cache images (65% quality)
+  - **Lazy loading**: Images load as they enter viewport
+  - **Optimized sizing**: Responsive image sizes based on screen width
+  - **Reduced quality**: 65% quality on mobile vs 75% on desktop
+</Accordion>
+
+<Accordion title="Loading strategy">
+  - **Eager loading**: First 8 images load immediately
+  - **Lazy loading**: Remaining images load on scroll
+  - **Viewport offset**: Images start loading 100px before entering view
+  - **Batch loading**: 20 wallpapers per infinite scroll batch
+</Accordion>
+
+### Hardware acceleration
+
+Mobile animations use GPU acceleration:
+
+```css
+.group {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+}
+```
+
+This ensures 60fps scrolling and smooth animations.
+
+### Reduced effects
+
+<Note>
+  On mobile devices, certain effects are simplified:
+  - Shorter animation delays (10ms vs 50ms between cards)
+  - Smaller transform distances (10px vs 30px in fade-up animations)
+  - Instant button transitions (0ms delay vs staggered delays)
+  - Simplified hover states (since hover doesn't apply)
+</Note>
+
+## Mobile-specific features
+
+### Native share
+
+When you tap the share button on mobile:
+
+1. Checks for `navigator.share` support
+2. If available, opens native share sheet
+3. If not available, copies link to clipboard
+
+Share data includes:
+- Title: "Wallpaper"
+- Text: Wallpaper description
+- URL: Direct link to wallpaper page
+
+### Download notifications
+
+Mobile download confirmations:
+- Bottom-center toast notifications
+- 3-second display duration
+- Shows filename and file type
+- Includes download icon
+
+### Responsive grid
+
+Mobile grid adapts to screen size:
+
+- **Mobile portrait** (< 640px): 2 columns
+- **Mobile landscape** (640-768px): 3 columns
+- **Tablet** (768-1024px): 3-4 columns
+- **Desktop** (> 1024px): 4-5 columns
+
+## Accessibility on mobile
+
+### Touch targets
+
+All interactive elements meet minimum touch target size:
+- Buttons: 44px × 44px minimum
+- Cards: Full card is tappable
+- Filter buttons: 40px height minimum
+
+### Focus states
+
+Touch interactions trigger visible focus states:
+- Button scale animations on tap
+- Color changes on active state
+- Visual feedback for all interactions
+
+### Screen reader support
+
+- Semantic HTML elements
+- ARIA labels on icon-only buttons
+- Descriptive alt text on all images
+- Proper heading hierarchy
+
+## Keyboard shortcuts on mobile
+
+While most mobile devices use touch, keyboard-connected devices support:
+
+- `Escape`: Close search/modal
+- Arrow keys: Navigate modal when keyboard is attached
+- Tab navigation: Focus on interactive elements
+
+<Tip>
+  If you connect a keyboard to your mobile device, all desktop keyboard shortcuts will work, including Cmd/Ctrl+K for search.
+</Tip>
+
+## Network optimization
+
+Mobile-specific network features:
+
+### Adaptive image loading
+- Detects network speed (if available)
+- Adjusts image quality based on connection
+- Prioritizes viewport images
+
+### Cache strategy
+- WebP format for smaller file sizes
+- Preview images cached locally
+- Full resolution loaded on demand
+
+### Data saving
+- Lower quality preview images (65%)
+- Progressive loading prevents loading all images at once
+- Infinite scroll loads images in batches
+
+## Testing on mobile
+
+To test the mobile experience:
+
+1. **Real device**: Best for testing touch gestures and performance
+2. **Browser DevTools**: Use device emulation mode
+3. **Responsive mode**: Test different screen sizes
+4. **Network throttling**: Test on slower connections
+
+<Note>
+  The mobile experience is continuously optimized based on performance metrics and user feedback. Performance improvements are regularly deployed.
+</Note>

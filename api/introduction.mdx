@@ -1,0 +1,123 @@
+---
+title: "API overview"
+description: "Access WallWidgy's wallpaper collection programmatically through our REST API"
+---
+
+## What the API provides
+
+The WallWidgy REST API gives you programmatic access to our curated wallpaper collection. You can retrieve random wallpapers, filter by device type (desktop or mobile), search by category, and filter by color—all through simple HTTP requests.
+
+The API is designed for developers building wallpaper apps, browser extensions, desktop widgets, or any application that needs high-quality wallpapers.
+
+## Base URL
+
+All API requests are made to your deployed WallWidgy site:
+
+```
+https://your-site.vercel.app/api
+```
+
+Replace `your-site.vercel.app` with your actual deployment URL.
+
+## Response format
+
+All API responses are returned as JSON. Successful responses include the requested data, while errors include an `error` field with a description.
+
+**Successful response example:**
+
+```json
+{
+  "wallpapers": [
+    "https://your-site.vercel.app/wallpapers/nature_001.jpg",
+    "https://your-site.vercel.app/wallpapers/abstract_042.jpg"
+  ],
+  "count": 2,
+  "category": "all",
+  "type": "all",
+  "color": "all"
+}
+```
+
+**Error response example:**
+
+```json
+{
+  "error": "Category 'nonexistent' not found"
+}
+```
+
+## Quick example
+
+Here's how to fetch a random wallpaper:
+
+<CodeGroup>
+
+```bash cURL
+curl https://your-site.vercel.app/api/wallpapers
+```
+
+```javascript JavaScript
+fetch('https://your-site.vercel.app/api/wallpapers')
+  .then(response => response.json())
+  .then(data => console.log(data.wallpapers[0]));
+```
+
+```python Python
+import requests
+
+response = requests.get('https://your-site.vercel.app/api/wallpapers')
+data = response.json()
+print(data['wallpapers'][0])
+```
+
+</CodeGroup>
+
+## Available endpoints
+
+The API provides several endpoints for different use cases:
+
+<CardGroup cols={2}>
+
+<Card title="Get wallpapers" icon="images" href="/api/endpoints/wallpapers">
+  Retrieve one or more wallpapers with optional filters
+</Card>
+
+<Card title="Search wallpapers" icon="magnifying-glass" href="/api/endpoints/search">
+  Search wallpapers by keyword (when available)
+</Card>
+
+<Card title="Random wallpaper" icon="shuffle" href="/api/endpoints/random-wallpaper">
+  Get a single random wallpaper
+</Card>
+
+<Card title="Get colors" icon="palette" href="/api/endpoints/colors">
+  Retrieve available color filters
+</Card>
+
+</CardGroup>
+
+<Note>
+  No authentication required—the API is fully public and CORS-enabled. See [Authentication](/api/authentication) for details.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+
+<Card title="Authentication" icon="shield" href="/api/authentication">
+  Learn about API access and CORS support
+</Card>
+
+<Card title="Rate limits" icon="gauge" href="/api/rate-limits">
+  Understand fair usage guidelines
+</Card>
+
+<Card title="Filtering" icon="filter" href="/api/guides/filtering">
+  Learn how to filter wallpapers
+</Card>
+
+<Card title="Examples" icon="code" href="/api/guides/examples">
+  See complete implementation examples
+</Card>
+
+</CardGroup>

@@ -1,0 +1,172 @@
+---
+title: Favorites system
+description: Save and sync your favorite wallpapers across devices with cloud backup and local storage
+---
+
+# Favorites system
+
+WallWidgy's favorites system lets you save wallpapers you love with automatic synchronization between local storage and cloud when you sign in.
+
+## How favorites work
+
+The favorites system uses a hybrid local + cloud approach for maximum reliability:
+
+<CardGroup cols={2}>
+  <Card title="Local storage" icon="hard-drive">
+    Favorites are saved to browser localStorage immediately for instant access
+  </Card>
+  
+  <Card title="Cloud sync" icon="cloud">
+    When signed in, favorites automatically sync to the cloud and across devices
+  </Card>
+  
+  <Card title="Optimistic updates" icon="bolt">
+    Changes appear instantly with background synchronization to the server
+  </Card>
+  
+  <Card title="Automatic merging" icon="git-merge">
+    Local and cloud favorites merge automatically when you sign in
+  </Card>
+</CardGroup>
+
+## Adding favorites
+
+<Steps>
+  <Step title="Browse wallpapers">
+    Find a wallpaper you like by browsing categories, searching, or using AI recommendations
+  </Step>
+  
+  <Step title="Click the heart icon">
+    Click the heart icon on any wallpaper thumbnail or in the fullscreen modal
+  </Step>
+  
+  <Step title="See confirmation">
+    The heart fills in to show the wallpaper was added to favorites
+  </Step>
+  
+  <Step title="Access favorites">
+    Visit the Favorites page from the header menu to see all saved wallpapers
+  </Step>
+</Steps>
+
+## Managing favorites
+
+### Viewing favorites
+
+Access your favorites page to see all saved wallpapers in one place:
+
+- Grid or masonry layout options
+- Same filtering and sorting as the main gallery
+- Device filter (All/Desktop/Mobile)
+- Batch download all favorites
+
+### Removing favorites
+
+Click the filled heart icon on any favorite wallpaper to remove it. The change happens instantly.
+
+### Clearing all favorites
+
+<Warning>
+  Use the "Clear All" button on the favorites page to remove all saved wallpapers. This action cannot be undone.
+</Warning>
+
+## Cloud synchronization
+
+When you sign in with Clerk authentication:
+
+1. **Automatic sync on sign-in** - Local favorites merge with cloud favorites
+2. **Real-time updates** - Every favorite action syncs to the cloud
+3. **Cross-device access** - Access favorites from any device where you're signed in
+4. **Fallback to local** - If cloud sync fails, favorites remain in localStorage
+
+### Sync behavior
+
+```javascript
+// Adding a favorite
+1. Update local state immediately (optimistic)
+2. Save to localStorage
+3. If signed in, sync to cloud in background
+4. If cloud sync fails, revert local state
+
+// Loading favorites
+1. Check if user is signed in
+2. If signed in, fetch from cloud API
+3. If not signed in or API fails, load from localStorage
+4. Cache in localStorage as backup
+```
+
+## Implementation details
+
+The favorites system is implemented in `hooks/use-favorites.ts`:
+
+<Accordion title="Toggle favorite implementation">
+```javascript
+const toggleFavorite = async (wallpaperId: string) => {
+  const isFav = favorites.includes(wallpaperId)
+  const newFavorites = isFav
+    ? favorites.filter(id => id !== wallpaperId)
+    : [...favorites, wallpaperId]
+
+  // Optimistic update
+  setFavorites(newFavorites)
+  localStorage.setItem('favorites', JSON.stringify(newFavorites))
+
+  if (isSignedIn) {
+    // Sync to cloud
+    await fetch('/api/favorites', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        wallpaperId,
+        action: isFav ? 'remove' : 'add'
+      })
+    })
+  }
+}
+```
+</Accordion>
+
+<Accordion title="Sync local to cloud">
+```javascript
+const syncLocalToCloud = async () => {
+  if (!isSignedIn) return
+
+  const localFavorites = JSON.parse(localStorage.getItem('favorites'))
+  const response = await fetch('/api/favorites')
+  const data = await response.json()
+  const cloudFavorites = data.favorites || []
+  
+  // Merge without duplicates
+  const merged = [...new Set([...cloudFavorites, ...localFavorites])]
+  
+  // Save merged favorites to cloud
+  await fetch('/api/favorites', {
+    method: 'POST',
+    body: JSON.stringify({ favorites: merged })
+  })
+  
+  setFavorites(merged)
+  localStorage.setItem('favorites', JSON.stringify(merged))
+}
+```
+</Accordion>
+
+## Sharing favorites
+
+You can share your favorites collection with others:
+
+1. Click the "Share" button on the favorites page
+2. Your favorites are uploaded with a unique shareable link
+3. Share the link with anyone to let them browse your collection
+4. Shared collections remain accessible even if you modify your favorites
+
+<Tip>
+  Sign in to enable cloud sync and access your favorites from any device. Without signing in, favorites are only stored locally in your browser.
+</Tip>
+
+## Best practices
+
+- **Sign in for sync** - Create an account to backup favorites and access across devices
+- **Export regularly** - Use the share feature to create backups of your collection
+- **Check cloud status** - The loading indicator shows when favorites are syncing
+- **Clear browser carefully** - Clearing browser data will remove local favorites if not synced

@@ -1,0 +1,259 @@
+---
+title: Get wallpapers
+description: Retrieve wallpapers with comprehensive filtering by type, category, color, and count
+---
+
+## GET /api/wallpapers
+
+Retrieve wallpapers from WallWidgy's collection with flexible filtering options. This is the main endpoint for accessing wallpapers with support for category, color, and device type filtering.
+
+<Note>
+  This endpoint fetches wallpapers from a GitHub repository index file and supports filtering by multiple criteria. It's ideal for applications that need category-based browsing with color filtering.
+</Note>
+
+## Query parameters
+
+<ParamField query="type" type="string">
+  Filter by device orientation. Accepts `desktop` for landscape wallpapers or `mobile` for portrait wallpapers. The filter is applied based on the `orientation` field in the wallpaper index.
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter by category name. Categories are prefixed with `#` in the index (e.g., `nature`, `abstract`, `space`). Provide the category name without the `#` prefix.
+</ParamField>
+
+<ParamField query="color" type="string">
+  Filter by primary or secondary color. Use lowercase color names. The endpoint searches both primary and secondary color fields for matches.
+</ParamField>
+
+<ParamField query="count" type="number" default="1">
+  Number of random wallpapers to return. Must be between 1 and 10. Results are randomly shuffled before selection. Defaults to 1.
+</ParamField>
+
+## Response
+
+<ResponseField name="wallpapers" type="array">
+  Array of wallpaper URLs. Each URL points to the full-resolution wallpaper image.
+  
+  <ResponseField name="[url]" type="string">
+    Full URL to the wallpaper image
+  </ResponseField>
+</ResponseField>
+
+<ResponseField name="count" type="number">
+  Actual number of wallpapers returned in the response
+</ResponseField>
+
+<ResponseField name="category" type="string">
+  The category filter that was applied, or `all` if no category filter was specified
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  The device type filter that was applied, or `all` if no type filter was specified
+</ResponseField>
+
+<ResponseField name="color" type="string">
+  The color filter that was applied, or `all` if no color filter was specified
+</ResponseField>
+
+## Error responses
+
+<ResponseField name="error" type="string">
+  Error message describing what went wrong
+</ResponseField>
+
+<ResponseField name="debug" type="string">
+  Additional debug information (only included in development mode)
+</ResponseField>
+
+**404 Not Found** - Returned when:
+- No wallpapers match the specified category
+- No wallpapers match the specified color
+- No wallpapers are available
+
+**500 Internal Server Error** - Returned when:
+- Failed to fetch the wallpaper index from GitHub
+- An unexpected server error occurs
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+# Get a single random wallpaper
+curl https://wallwidgy.com/api/wallpapers
+
+# Get 5 desktop wallpapers
+curl "https://wallwidgy.com/api/wallpapers?type=desktop&count=5"
+
+# Get wallpapers from the nature category
+curl "https://wallwidgy.com/api/wallpapers?category=nature&count=3"
+
+# Get mobile wallpapers with blue color
+curl "https://wallwidgy.com/api/wallpapers?type=mobile&color=blue&count=5"
+
+# Get desktop wallpapers from space category with red color
+curl "https://wallwidgy.com/api/wallpapers?type=desktop&category=space&color=red&count=10"
+```
+
+```javascript JavaScript
+// Get a single random wallpaper
+fetch('https://wallwidgy.com/api/wallpapers')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Get 5 desktop wallpapers
+fetch('https://wallwidgy.com/api/wallpapers?type=desktop&count=5')
+  .then(response => response.json())
+  .then(data => {
+    console.log(`Got ${data.count} ${data.type} wallpapers`);
+    data.wallpapers.forEach(url => console.log(url));
+  });
+
+// Get wallpapers with advanced filtering
+const params = new URLSearchParams({
+  type: 'mobile',
+  category: 'abstract',
+  color: 'purple',
+  count: '10'
+});
+
+fetch(`https://wallwidgy.com/api/wallpapers?${params}`)
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error(`Error: ${data.error}`);
+    } else {
+      console.log(`Found ${data.count} ${data.type} wallpapers`);
+      console.log(`Category: ${data.category}, Color: ${data.color}`);
+      data.wallpapers.forEach(url => console.log(url));
+    }
+  })
+  .catch(error => console.error('Request failed:', error));
+```
+
+```python Python
+import requests
+
+# Get a single random wallpaper
+response = requests.get('https://wallwidgy.com/api/wallpapers')
+data = response.json()
+print(data)
+
+# Get 5 desktop wallpapers from nature category
+params = {
+    'type': 'desktop',
+    'category': 'nature',
+    'count': '5'
+}
+response = requests.get('https://wallwidgy.com/api/wallpapers', params=params)
+data = response.json()
+
+if 'error' in data:
+    print(f"Error: {data['error']}")
+else:
+    print(f"Got {data['count']} wallpapers")
+    print(f"Category: {data['category']}, Type: {data['type']}")
+    for url in data['wallpapers']:
+        print(url)
+
+# Get mobile wallpapers with blue color
+params = {
+    'type': 'mobile',
+    'color': 'blue',
+    'count': '10'
+}
+response = requests.get('https://wallwidgy.com/api/wallpapers', params=params)
+data = response.json()
+print(f"Found {data['count']} blue mobile wallpapers")
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/nature_mountain_desktop_01.jpg"
+  ],
+  "count": 1,
+  "category": "all",
+  "type": "all",
+  "color": "all"
+}
+```
+
+## Example response with filters
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/space_nebula_desktop_blue_01.jpg",
+    "https://wallwidgy.com/wallpapers/space_galaxy_desktop_blue_03.jpg",
+    "https://wallwidgy.com/wallpapers/space_stars_desktop_blue_07.jpg"
+  ],
+  "count": 3,
+  "category": "space",
+  "type": "desktop",
+  "color": "blue"
+}
+```
+
+## Example error responses
+
+```json Category not found
+{
+  "error": "Category 'invalid' not found"
+}
+```
+
+```json No wallpapers with color
+{
+  "error": "No wallpapers found with color 'purple'"
+}
+```
+
+```json Server error
+{
+  "error": "Internal server error",
+  "debug": "Failed to fetch wallpapers index"
+}
+```
+
+## Filtering behavior
+
+### Category filtering
+
+When you specify a category, the endpoint:
+1. Fetches the wallpaper index from GitHub
+2. Filters items where `category` matches `#<your-category>`
+3. Returns 404 if no wallpapers match the category
+
+### Color filtering
+
+Color filtering searches both `primary_colors` and `secondary_colors` fields:
+1. Splits the color fields by spaces
+2. Matches exact color names (case-insensitive)
+3. Returns 404 if no wallpapers match the color
+
+### Type filtering
+
+Type filtering is based on the `orientation` field in the index:
+- `type=desktop` filters for `orientation: "Desktop"`
+- `type=mobile` filters for `orientation: "Mobile"`
+- If no wallpapers match after type filtering, the filter is ignored
+
+### Multiple filters
+
+You can combine multiple filters. They are applied in this order:
+1. Category filter (if specified)
+2. Color filter (if specified)
+3. Type filter (if specified)
+4. Random shuffle and count selection
+
+## CORS support
+
+This endpoint includes CORS headers to allow cross-origin requests:
+- `Access-Control-Allow-Origin: *`
+- `Access-Control-Allow-Methods: GET`
+- `Access-Control-Allow-Headers: Content-Type`

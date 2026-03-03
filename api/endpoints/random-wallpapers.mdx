@@ -1,0 +1,235 @@
+---
+title: Get random wallpapers (Cloudinary)
+description: Retrieve multiple random wallpapers from Cloudinary with advanced filtering options
+---
+
+## GET /api/random-wallpapers
+
+Retrieve multiple random wallpapers from WallWidgy's Cloudinary-hosted collection. This endpoint provides more detailed metadata and supports resolution-based filtering.
+
+<Note>
+  This endpoint uses Cloudinary as the image source and returns different metadata compared to `/api/random-wallpaper`. It's designed for applications that need high-quality wallpapers with detailed information.
+</Note>
+
+## Query parameters
+
+<ParamField query="count" type="number" default="1">
+  Number of random wallpapers to return. The endpoint fetches up to 500 results and randomly selects the requested count. Defaults to 1.
+</ParamField>
+
+<ParamField query="tag" type="string">
+  Filter by tag. Use `desktop` for landscape-oriented wallpapers or `mobile` for portrait-oriented wallpapers. Tags are matched against Cloudinary resource tags.
+</ParamField>
+
+<ParamField query="resolution" type="string">
+  Filter by minimum resolution. Accepted values:
+  - `1080p` - Minimum 1920x1080
+  - `1440p` - Minimum 2560x1440
+  - `4k` - Minimum 3840x2160
+  - `8k` - Minimum 7680x4320
+</ParamField>
+
+## Response
+
+Returns an array of wallpaper objects with detailed metadata.
+
+<ResponseField name="[].public_id" type="string">
+  Cloudinary public identifier for the wallpaper
+</ResponseField>
+
+<ResponseField name="[].name" type="string">
+  Filename of the wallpaper (extracted from public_id)
+</ResponseField>
+
+<ResponseField name="[].width" type="number">
+  Width of the wallpaper in pixels
+</ResponseField>
+
+<ResponseField name="[].height" type="number">
+  Height of the wallpaper in pixels
+</ResponseField>
+
+<ResponseField name="[].format" type="string">
+  Image format (e.g., `jpg`, `png`, `webp`)
+</ResponseField>
+
+<ResponseField name="[].created_at" type="string">
+  ISO 8601 timestamp of when the wallpaper was uploaded to Cloudinary
+</ResponseField>
+
+<ResponseField name="[].tags" type="array">
+  Array of tags associated with the wallpaper
+</ResponseField>
+
+<ResponseField name="[].colors" type="array">
+  Array of dominant colors detected in the wallpaper
+</ResponseField>
+
+<ResponseField name="[].preview_url" type="string">
+  Optimized preview URL (600x400, cropped and auto-formatted)
+</ResponseField>
+
+<ResponseField name="[].download_url" type="string">
+  Full-resolution download URL
+</ResponseField>
+
+## Error responses
+
+<ResponseField name="error" type="string">
+  Error message describing what went wrong
+</ResponseField>
+
+**500 Internal Server Error** - Returned when there's a server error or Cloudinary API fails
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+# Get a single random wallpaper
+curl https://wallwidgy.com/api/random-wallpapers
+
+# Get 5 random desktop wallpapers
+curl "https://wallwidgy.com/api/random-wallpapers?count=5&tag=desktop"
+
+# Get 3 random 4K wallpapers
+curl "https://wallwidgy.com/api/random-wallpapers?count=3&resolution=4k"
+
+# Get 10 random mobile wallpapers in 1440p or higher
+curl "https://wallwidgy.com/api/random-wallpapers?count=10&tag=mobile&resolution=1440p"
+```
+
+```javascript JavaScript
+// Get a single random wallpaper
+fetch('https://wallwidgy.com/api/random-wallpapers')
+  .then(response => response.json())
+  .then(wallpapers => console.log(wallpapers));
+
+// Get 5 random desktop wallpapers in 4K
+const params = new URLSearchParams({
+  count: '5',
+  tag: 'desktop',
+  resolution: '4k'
+});
+
+fetch(`https://wallwidgy.com/api/random-wallpapers?${params}`)
+  .then(response => response.json())
+  .then(wallpapers => {
+    wallpapers.forEach(wp => {
+      console.log(`${wp.name} - ${wp.width}x${wp.height}`);
+      console.log(`Preview: ${wp.preview_url}`);
+      console.log(`Download: ${wp.download_url}`);
+    });
+  });
+
+// Download a random wallpaper
+fetch('https://wallwidgy.com/api/random-wallpapers')
+  .then(response => response.json())
+  .then(wallpapers => {
+    if (wallpapers.length > 0) {
+      window.location.href = wallpapers[0].download_url;
+    }
+  });
+```
+
+```python Python
+import requests
+
+# Get a single random wallpaper
+response = requests.get('https://wallwidgy.com/api/random-wallpapers')
+wallpapers = response.json()
+print(wallpapers)
+
+# Get 5 random 4K desktop wallpapers
+params = {
+    'count': '5',
+    'tag': 'desktop',
+    'resolution': '4k'
+}
+response = requests.get('https://wallwidgy.com/api/random-wallpapers', params=params)
+wallpapers = response.json()
+
+for wp in wallpapers:
+    print(f"{wp['name']} - {wp['width']}x{wp['height']}")
+    print(f"Colors: {', '.join(wp['colors'])}")
+    print(f"Download: {wp['download_url']}")
+    print()
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+[
+  {
+    "public_id": "wallpapers/mountain_sunset_4k",
+    "name": "mountain_sunset_4k",
+    "width": 3840,
+    "height": 2160,
+    "format": "jpg",
+    "created_at": "2024-03-15T10:30:00Z",
+    "tags": ["desktop", "nature", "landscape"],
+    "colors": ["#FF6B35", "#4A90E2", "#2C3E50"],
+    "preview_url": "https://res.cloudinary.com/.../f_auto,q_auto,w_600,h_400,c_fill/wallpapers/mountain_sunset_4k",
+    "download_url": "https://res.cloudinary.com/.../wallpapers/mountain_sunset_4k"
+  }
+]
+```
+
+## Example response with multiple wallpapers
+
+```json
+[
+  {
+    "public_id": "wallpapers/ocean_waves_mobile",
+    "name": "ocean_waves_mobile",
+    "width": 1080,
+    "height": 2400,
+    "format": "webp",
+    "created_at": "2024-03-10T14:20:00Z",
+    "tags": ["mobile", "nature", "water"],
+    "colors": ["#1E88E5", "#00ACC1", "#0277BD"],
+    "preview_url": "https://res.cloudinary.com/.../f_auto,q_auto,w_600,h_400,c_fill/wallpapers/ocean_waves_mobile",
+    "download_url": "https://res.cloudinary.com/.../wallpapers/ocean_waves_mobile"
+  },
+  {
+    "public_id": "wallpapers/forest_path_mobile",
+    "name": "forest_path_mobile",
+    "width": 1080,
+    "height": 2340,
+    "format": "jpg",
+    "created_at": "2024-03-08T09:15:00Z",
+    "tags": ["mobile", "nature", "forest"],
+    "colors": ["#2E7D32", "#558B2F", "#33691E"],
+    "preview_url": "https://res.cloudinary.com/.../f_auto,q_auto,w_600,h_400,c_fill/wallpapers/forest_path_mobile",
+    "download_url": "https://res.cloudinary.com/.../wallpapers/forest_path_mobile"
+  }
+]
+```
+
+## Example error response
+
+```json
+{
+  "error": "Failed to fetch wallpapers from Cloudinary"
+}
+```
+
+## Filtering behavior
+
+### Tag filtering
+
+When you use the `tag` parameter with `desktop` or `mobile`, the endpoint:
+1. Fetches wallpapers with the matching tag from Cloudinary
+2. Additionally filters by orientation: desktop (width > height) or mobile (height > width)
+3. Randomly shuffles the results
+4. Returns the requested count
+
+### Resolution filtering
+
+Resolution filtering is applied after tag filtering and ensures wallpapers meet minimum dimension requirements:
+- `1080p`: At least 1920 pixels wide AND 1080 pixels tall
+- `1440p`: At least 2560 pixels wide AND 1440 pixels tall
+- `4k`: At least 3840 pixels wide AND 2160 pixels tall
+- `8k`: At least 7680 pixels wide AND 4320 pixels tall

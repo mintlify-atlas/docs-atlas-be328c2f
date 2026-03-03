@@ -1,0 +1,198 @@
+---
+title: Get available colors
+description: Retrieve a list of all available colors that can be used for filtering wallpapers
+---
+
+## GET /api/colors
+
+Retrieve a complete list of all available colors extracted from the wallpaper collection. Use this endpoint to discover which colors you can filter by when requesting wallpapers.
+
+<Info>
+  This endpoint fetches color data from a GitHub repository file (`tags.json`) and extracts all unique colors from the wallpaper metadata. Colors are returned with their names and corresponding hex values.
+</Info>
+
+## Query parameters
+
+This endpoint does not accept any query parameters.
+
+## Response
+
+Returns an array of color objects.
+
+<ResponseField name="[].name" type="string">
+  Name of the color (e.g., `darkslategray`, `black`, `blue`)
+</ResponseField>
+
+<ResponseField name="[].hex" type="string">
+  Hexadecimal color code (e.g., `#2F4F4F`, `#000000`)
+</ResponseField>
+
+## Error responses
+
+<ResponseField name="error" type="string">
+  Error message describing what went wrong
+</ResponseField>
+
+**500 Internal Server Error** - Returned when:
+- GitHub configuration is missing (GITHUB_REPO_OWNER or GITHUB_REPO_NAME)
+- Failed to fetch the tags.json file from GitHub
+- Invalid response format from GitHub API
+- Any other server error occurs
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+# Get all available colors
+curl https://wallwidgy.com/api/colors
+```
+
+```javascript JavaScript
+// Fetch all available colors
+fetch('https://wallwidgy.com/api/colors')
+  .then(response => response.json())
+  .then(colors => {
+    console.log(`Found ${colors.length} colors`);
+    colors.forEach(color => {
+      console.log(`${color.name}: ${color.hex}`);
+    });
+  })
+  .catch(error => console.error('Error:', error));
+
+// Use colors to build a color picker
+fetch('https://wallwidgy.com/api/colors')
+  .then(response => response.json())
+  .then(colors => {
+    const colorPicker = document.getElementById('color-picker');
+    colors.forEach(color => {
+      const option = document.createElement('div');
+      option.style.backgroundColor = color.hex;
+      option.textContent = color.name;
+      option.onclick = () => {
+        // Fetch wallpapers filtered by this color
+        fetchWallpapersByColor(color.name);
+      };
+      colorPicker.appendChild(option);
+    });
+  });
+
+function fetchWallpapersByColor(colorName) {
+  fetch(`https://wallwidgy.com/api/wallpapers?color=${colorName}&count=10`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(`Found ${data.count} ${colorName} wallpapers`);
+      // Display wallpapers...
+    });
+}
+```
+
+```python Python
+import requests
+
+# Get all available colors
+response = requests.get('https://wallwidgy.com/api/colors')
+colors = response.json()
+
+print(f"Found {len(colors)} colors:")
+for color in colors:
+    print(f"{color['name']}: {color['hex']}")
+
+# Use a specific color to fetch wallpapers
+if colors:
+    first_color = colors[0]['name']
+    wallpaper_response = requests.get(
+        'https://wallwidgy.com/api/wallpapers',
+        params={'color': first_color, 'count': 5}
+    )
+    wallpapers = wallpaper_response.json()
+    print(f"\nFound {wallpapers['count']} wallpapers with color '{first_color}':")
+    for url in wallpapers['wallpapers']:
+        print(url)
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+[
+  {
+    "name": "darkslategray",
+    "hex": "#2F4F4F"
+  },
+  {
+    "name": "black",
+    "hex": "#000000"
+  },
+  {
+    "name": "blue",
+    "hex": "#0000FF"
+  },
+  {
+    "name": "red",
+    "hex": "#FF0000"
+  },
+  {
+    "name": "green",
+    "hex": "#00FF00"
+  }
+]
+```
+
+## Example error response
+
+```json
+{
+  "error": "GitHub configuration missing"
+}
+```
+
+## How colors are extracted
+
+The endpoint retrieves colors through the following process:
+
+1. Fetches `tags.json` from the configured GitHub repository
+2. Decodes the base64-encoded file content
+3. Parses the JSON data
+4. Iterates through all wallpaper entries
+5. Collects colors from the `colors` array of each entry
+6. Removes duplicates using a Set
+7. Maps color names to hex values using a predefined color map
+8. Returns an array of unique colors with their hex codes
+
+## Color mapping
+
+The endpoint includes a color mapping function that converts color names to hex codes. Currently supported colors include:
+
+- `darkslategray`: #2F4F4F
+- `black`: #000000
+
+For colors not in the predefined map, the endpoint defaults to `#000000` (black). The color map can be extended by updating the `getColorHex` function in the source code.
+
+## Using colors with other endpoints
+
+Once you retrieve the available colors, you can use them to filter wallpapers:
+
+```javascript
+// Get available colors
+const colorsResponse = await fetch('https://wallwidgy.com/api/colors');
+const colors = await colorsResponse.json();
+
+// Use a color to filter wallpapers
+const colorName = colors[0].name;
+const wallpapersResponse = await fetch(
+  `https://wallwidgy.com/api/wallpapers?color=${colorName}&count=10`
+);
+const wallpapers = await wallpapersResponse.json();
+```
+
+## Requirements
+
+This endpoint requires the following environment variables to be configured:
+
+- `NEXT_PUBLIC_GITHUB_ACCESS_TOKEN` - GitHub personal access token
+- `NEXT_PUBLIC_GITHUB_REPO_OWNER` - GitHub repository owner
+- `NEXT_PUBLIC_GITHUB_REPO_NAME` - GitHub repository name
+
+The repository must contain a `tags.json` file at the root level with wallpaper metadata including color information.

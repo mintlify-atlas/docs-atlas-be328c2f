@@ -1,0 +1,335 @@
+---
+title: Device type filtering
+description: Filter wallpapers by desktop or mobile orientation to get perfectly sized images for any device
+---
+
+## Overview
+
+The WallWidgy API automatically categorizes wallpapers by orientation, making it easy to fetch wallpapers optimized for specific devices. Use the `type` query parameter to filter by desktop or mobile.
+
+## Supported device types
+
+The API supports two device types based on image orientation:
+
+- `desktop` - Landscape/horizontal wallpapers (wider than tall)
+- `mobile` - Portrait/vertical wallpapers (taller than wide)
+
+## How device detection works
+
+Wallpapers are categorized by their orientation in the metadata:
+
+- **Desktop**: `orientation: "Desktop"` - Landscape images optimized for monitors, laptops, and wide screens
+- **Mobile**: `orientation: "Mobile"` - Portrait images optimized for phones and tablets
+
+## Basic usage
+
+### Get mobile wallpapers
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=mobile"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=mobile'
+);
+const data = await response.json();
+console.log(data.wallpapers);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'type': 'mobile'}
+)
+wallpapers = response.json()['wallpapers']
+```
+
+</CodeGroup>
+
+### Get desktop wallpapers
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=desktop"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=desktop'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'type': 'desktop'}
+)
+```
+
+</CodeGroup>
+
+## Response format
+
+The response includes the device type in the metadata:
+
+```json
+{
+  "wallpapers": [
+    "https://wallwidgy.com/wallpapers/wallpapers_mobile_001.webp"
+  ],
+  "count": 1,
+  "category": "all",
+  "type": "mobile",
+  "color": "all"
+}
+```
+
+## Combining with other filters
+
+### Device type + category
+
+Get mobile anime wallpapers:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=mobile&category=anime"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=mobile&category=anime'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'type': 'mobile', 'category': 'anime'}
+)
+```
+
+</CodeGroup>
+
+### Device type + color
+
+Get desktop wallpapers with blue tones:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=desktop&color=blue"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=desktop&color=blue'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'type': 'desktop', 'color': 'blue'}
+)
+```
+
+</CodeGroup>
+
+### Device type + category + color
+
+Get mobile nature wallpapers with green tones:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=mobile&category=nature&color=green"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=mobile&category=nature&color=green'
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={
+        'type': 'mobile',
+        'category': 'nature',
+        'color': 'green'
+    }
+)
+```
+
+</CodeGroup>
+
+## Multiple wallpapers
+
+Fetch multiple wallpapers of the same device type:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://wallwidgy.com/api/wallpapers?type=mobile&count=5"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://wallwidgy.com/api/wallpapers?type=mobile&count=5'
+);
+const data = await response.json();
+console.log(`Got ${data.count} mobile wallpapers`);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://wallwidgy.com/api/wallpapers',
+    params={'type': 'mobile', 'count': 5}
+)
+data = response.json()
+print(f"Got {data['count']} mobile wallpapers")
+```
+
+</CodeGroup>
+
+## Practical examples
+
+### Responsive wallpaper picker
+
+Detect device type and fetch appropriate wallpapers:
+
+```javascript
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+         window.innerWidth < 768;
+}
+
+async function fetchWallpaperForDevice() {
+  const deviceType = isMobileDevice() ? 'mobile' : 'desktop';
+  
+  const response = await fetch(
+    `https://wallwidgy.com/api/wallpapers?type=${deviceType}&count=3`
+  );
+  
+  const data = await response.json();
+  return data.wallpapers;
+}
+
+// Usage
+const wallpapers = await fetchWallpaperForDevice();
+console.log(wallpapers);
+```
+
+### Platform-specific app
+
+Fetch wallpapers based on platform:
+
+```python
+import platform
+import requests
+
+def get_platform_wallpapers(count=5):
+    # Determine platform
+    system = platform.system()
+    device_type = 'mobile' if system in ['Android', 'iOS'] else 'desktop'
+    
+    response = requests.get(
+        'https://wallwidgy.com/api/wallpapers',
+        params={'type': device_type, 'count': count}
+    )
+    
+    return response.json()['wallpapers']
+
+# Usage
+wallpapers = get_platform_wallpapers(count=10)
+print(f"Got {len(wallpapers)} {device_type} wallpapers")
+```
+
+## Fallback behavior
+
+<Note>
+  If no wallpapers match the device type filter (combined with other filters), the API automatically falls back to showing all device types that match the remaining filters.
+</Note>
+
+For example:
+```bash
+# If no mobile nature wallpapers exist
+curl "https://wallwidgy.com/api/wallpapers?type=mobile&category=nature"
+
+# The API will return desktop nature wallpapers as a fallback
+```
+
+## Common use cases
+
+### Mobile app wallpaper feature
+
+```javascript
+// React Native example
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+const isPortrait = height > width;
+const deviceType = isPortrait ? 'mobile' : 'desktop';
+
+const fetchWallpapers = async () => {
+  const response = await fetch(
+    `https://wallwidgy.com/api/wallpapers?type=${deviceType}&count=10`
+  );
+  return await response.json();
+};
+```
+
+### Desktop wallpaper rotator
+
+```python
+import requests
+import time
+import os
+
+def rotate_desktop_wallpaper(interval_seconds=3600):
+    """Change desktop wallpaper every hour"""
+    while True:
+        response = requests.get(
+            'https://wallwidgy.com/api/wallpapers',
+            params={'type': 'desktop', 'count': 1}
+        )
+        
+        wallpaper_url = response.json()['wallpapers'][0]
+        # Download and set as wallpaper
+        # (implementation depends on OS)
+        
+        time.sleep(interval_seconds)
+```
+
+## Best practices
+
+1. **Auto-detect device type** - Use device detection logic to automatically request the right type
+2. **Combine with categories** - Get device-specific wallpapers in user's favorite category
+3. **Request multiple wallpapers** - Fetch several at once to reduce API calls
+4. **Handle fallbacks** - Be prepared to receive any device type if filters are too restrictive
+
+<Tip>
+  For the best user experience, combine device type filtering with category preferences. For example: `type=mobile&category=anime&count=10`
+</Tip>

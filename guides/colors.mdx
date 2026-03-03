@@ -1,0 +1,161 @@
+---
+title: Color-based discovery
+description: Find wallpapers using color search and filtering
+---
+
+WallWidgy includes powerful color-based search capabilities, allowing you to discover wallpapers based on their color palette.
+
+## How color search works
+
+Wallpaper metadata includes detailed color information:
+
+- **Primary colors**: The dominant colors in the wallpaper
+- **Secondary colors**: Supporting colors that appear in the composition
+- **Color palette**: Overall color scheme description
+
+This metadata enables precise color-based filtering when searching.
+
+## Searching by color
+
+<Steps>
+  <Step title="Open search">
+    Click the search button in the bottom-right (mobile) or bottom-center (desktop), or press `Cmd+K` (Mac) / `Ctrl+K` (Windows/Linux).
+  </Step>
+  
+  <Step title="Enter color query">
+    Type color names like:
+    - Basic colors: "blue", "red", "green", "purple"
+    - Specific shades: "dark blue", "light pink", "navy"
+    - Color combinations: "blue and orange", "red yellow"
+  </Step>
+  
+  <Step title="View results">
+    Results are filtered in real-time to show wallpapers matching your color criteria.
+  </Step>
+</Steps>
+
+## Color-related search terms
+
+The search function looks for color matches in multiple fields:
+
+### Primary colors field
+The main colors that define the wallpaper's appearance.
+
+### Secondary colors field
+Supporting colors that complement the primary palette.
+
+### Color palette description
+Text descriptions like:
+- "Colorful"
+- "Monochromatic"
+- "Vibrant"
+- "Pastel"
+- "Dark"
+- "Minimalist"
+
+### Mood-based color searches
+Colors are also associated with moods:
+- "Calm" (often blues, greens)
+- "Energetic" (often reds, oranges)
+- "Dark" (blacks, dark grays)
+- "Bright" (vivid, saturated colors)
+
+<Tip>
+  Try popular color searches like "Colorful", "Dark", "Minimalist", or "Abstract" - these are featured as quick search suggestions.
+</Tip>
+
+## Search interface features
+
+### Popular searches
+When you open search, you'll see popular color-related suggestions:
+- Minimalist
+- Dark
+- Colorful
+- Nature
+- Abstract
+- Anime
+
+Click any suggestion to instantly search for that style.
+
+### Device filtering
+After getting search results, you can filter by device type:
+- **All**: Show all matching wallpapers
+- **Desktop**: Only landscape wallpapers
+- **Mobile**: Only portrait wallpapers
+
+### Real-time results
+Search results update instantly as you type, with:
+- Result count displayed in the header
+- Grid layout optimized for browsing
+- Platform indicators (Mobile/PC) on each wallpaper
+- Resolution badges visible on hover
+
+## Color page URLs
+
+You can also access color-filtered pages directly via URLs:
+
+```
+/color/[colorname]
+```
+
+For example:
+- `/color/blue` - All blue wallpapers
+- `/color/dark` - All dark wallpapers
+- `/color/colorful` - All colorful wallpapers
+
+<Note>
+  Color page URLs are case-insensitive and automatically decoded, so spaces and special characters work correctly.
+</Note>
+
+## Advanced color search tips
+
+### Combine with other terms
+You can search for colors along with other criteria:
+- "blue anime" - Blue anime wallpapers
+- "dark minimal" - Dark minimal wallpapers
+- "colorful nature" - Colorful nature scenes
+
+### Search by mood and technique
+Colors are also tagged by:
+- **Mood**: Calm, energetic, peaceful, dramatic
+- **Art style**: Realistic, stylized, abstract
+- **Technique**: Digital painting, photography, 3D render
+
+### Use specific color names
+The platform recognizes specific color names from the data:
+- Standard colors: red, blue, green, yellow, purple, orange, pink
+- Shades: navy, teal, maroon, crimson, azure
+- Special colors: darkslategray, black, white
+
+## Search performance
+
+The color search system:
+
+- Searches through all wallpaper metadata fields
+- Performs case-insensitive matching
+- Returns results in under 1 second for the entire library
+- Supports infinite scroll loading (20 wallpapers at a time)
+- Includes keyboard shortcuts (`Escape` to close, `Cmd/Ctrl+K` to open)
+
+<Tip>
+  Search results persist when you open a wallpaper and return, making it easy to browse through your search results without losing your place.
+</Tip>
+
+## Color API
+
+Developers can access color data via the `/api/colors` endpoint, which returns:
+
+```json
+[
+  {
+    "name": "darkslategray",
+    "hex": "#2F4F4F"
+  },
+  {
+    "name": "black",
+    "hex": "#000000"
+  }
+]
+```
+
+This data comes from the wallpaper metadata stored in the GitHub repository.
