@@ -1,0 +1,78 @@
+---
+title: Delete wallpaper
+description: Delete a wallpaper from Cloudinary storage
+---
+
+# DELETE /api/wallpapers/[public_id]
+
+Delete a specific wallpaper from Cloudinary storage using its public ID.
+
+<Warning>
+  This endpoint requires Cloudinary API credentials and is intended for administrative use only. Regular users should not have access to delete wallpapers.
+</Warning>
+
+## Request
+
+### Path parameters
+
+<ParamField path="public_id" type="string" required>
+  The Cloudinary public ID of the wallpaper to delete
+</ParamField>
+
+### Example request
+
+```bash cURL
+curl -X DELETE https://wallwidgy.vercel.app/api/wallpapers/wallpapers/sample-wallpaper
+```
+
+## Response
+
+### Success response
+
+<ResponseField name="message" type="string">
+  Success message confirming the wallpaper was deleted
+</ResponseField>
+
+```json
+{
+  "message": "Wallpaper deleted successfully"
+}
+```
+
+### Error responses
+
+<Accordion title="500 Internal Server Error">
+```json
+{
+  "error": "Failed to delete from Cloudinary"
+}
+```
+
+Returned when the Cloudinary deletion operation fails.
+</Accordion>
+
+## Implementation
+
+This endpoint uses the Cloudinary SDK to delete images:
+
+```typescript
+const result = await cloudinary.uploader.destroy(params.public_id);
+
+if (result.result === 'ok') {
+  return NextResponse.json({ message: 'Wallpaper deleted successfully' });
+} else {
+  throw new Error('Failed to delete from Cloudinary');
+}
+```
+
+## Authentication
+
+This endpoint requires valid Cloudinary API credentials configured in environment variables:
+
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+
+<Note>
+  This is an administrative endpoint. In production, you should add authentication middleware to restrict access to authorized administrators only.
+</Note>

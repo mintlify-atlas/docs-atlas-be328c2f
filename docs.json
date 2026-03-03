@@ -42,7 +42,9 @@
               "guides/browsing",
               "guides/categories",
               "guides/colors",
-              "guides/mobile-experience"
+              "guides/mobile-experience",
+              "guides/latest-wallpapers",
+              "guides/sharing-favorites"
             ]
           }
         ]
@@ -61,7 +63,10 @@
               "api/endpoints/random-wallpapers",
               "api/endpoints/wallpapers",
               "api/endpoints/search",
-              "api/endpoints/colors"
+              "api/endpoints/colors",
+              "api/endpoints/favorites",
+              "api/endpoints/favorites-username",
+              "api/endpoints/wallpaper-delete"
             ]
           },
           {

@@ -1,0 +1,112 @@
+---
+title: Latest wallpapers
+description: Browse recently added wallpapers sorted by upload date
+---
+
+# Latest wallpapers
+
+The latest wallpapers page shows recently added wallpapers in chronological order, making it easy to discover new content as it's added to the collection.
+
+## Accessing latest wallpapers
+
+Visit `/latest` on WallWidgy to see the latest wallpapers page.
+
+The page displays:
+- Fixed header with navigation back to home
+- Page title "Latest Wallpapers"
+- Wallpaper grid sorted by upload date (newest first)
+- All standard features (search, favorites, device filtering)
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="Chronological sorting" icon="clock">
+    Wallpapers are automatically sorted by their upload timestamp, with the newest at the top
+  </Card>
+  
+  <Card title="Same grid experience" icon="grid">
+    Uses the same WallpaperGrid component as the home page with all features intact
+  </Card>
+  
+  <Card title="Quick navigation" icon="arrow-left">
+    Back button in the header for easy return to home
+  </Card>
+  
+  <Card title="Full functionality" icon="sparkles">
+    Search, favorites, layout switching, and device filtering all work on this page
+  </Card>
+</CardGroup>
+
+## Use cases
+
+### Discover new content
+
+Check the latest page regularly to see:
+- Newly uploaded wallpapers
+- Fresh designs and styles
+- Recently curated content
+- Trending additions
+
+### Stay updated
+
+The latest page helps you:
+- Keep track of new wallpapers since your last visit
+- Find the most recent additions to specific categories
+- Discover new artists or styles being added
+- Monitor collection growth
+
+## Page structure
+
+The latest wallpapers page includes:
+
+```tsx
+<header>
+  <BackButton /> // Navigate back to home
+  <HeartIcon /> // Link to home
+</header>
+
+<main>
+  <h1>Latest Wallpapers</h1>
+  <WallpaperGrid /> // Standard grid with all features
+</main>
+
+<Footer />
+<BackToTop />
+```
+
+## Filtering on latest
+
+You can combine the chronological sorting with other filters:
+
+<Steps>
+  <Step title="Use device filters">
+    Filter by Desktop or Mobile to see only recent wallpapers for your device
+  </Step>
+  
+  <Step title="Search within latest">
+    Use the search feature to find specific recent wallpapers by metadata
+  </Step>
+  
+  <Step title="Change layout">
+    Switch between masonry and grid layouts to suit your browsing preference
+  </Step>
+</Steps>
+
+## Technical details
+
+The page uses the same WallpaperGrid component as the homepage but with sorting applied:
+
+- Wallpapers include a `timestamp` field in their metadata
+- Grid automatically sorts by this timestamp in descending order
+- Upload dates are preserved from the original file metadata
+- Recent uploads appear first without manual curation
+
+<Tip>
+  Bookmark the latest page (`/latest`) to quickly check for new wallpapers without browsing the entire collection.
+</Tip>
+
+## See also
+
+- [Browsing guide](/guides/browsing) - Learn about browsing and filtering wallpapers
+- [Categories](/guides/categories) - Browse wallpapers by category
+- [Search](/features/search) - Search for specific wallpapers

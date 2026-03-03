@@ -1,0 +1,191 @@
+---
+title: Sharing favorites
+description: Share your favorites collection with others via shareable links
+---
+
+# Sharing favorites
+
+WallWidgy lets you share your favorites collection with others using shareable links. Anyone with the link can view your curated collection.
+
+## How sharing works
+
+When you share your favorites:
+
+1. Your favorites are accessible via your username
+2. Anyone can view your collection at `/share/[username]`
+3. Your profile information is displayed (name, avatar)
+4. Visitors can browse your favorites in the standard grid
+5. Your favorites remain synced with your account
+
+<Note>
+  Favorites are stored in Clerk's public metadata, making them accessible to anyone who knows your username. Consider this when favoriting wallpapers.
+</Note>
+
+## Sharing your collection
+
+<Steps>
+  <Step title="Sign in to WallWidgy">
+    Create an account or sign in with Clerk authentication to enable cloud sync
+  </Step>
+  
+  <Step title="Add favorites">
+    Favorite wallpapers you want to include in your shared collection
+  </Step>
+  
+  <Step title="Share your username">
+    Share the URL: `https://wallwidgy.vercel.app/share/[your-username]`
+  </Step>
+  
+  <Step title="Update anytime">
+    Your shared collection automatically updates as you add or remove favorites
+  </Step>
+</Steps>
+
+## Viewing shared collections
+
+When someone shares their favorites with you:
+
+<Steps>
+  <Step title="Click the share link">
+    Open the link they provided (e.g., `/share/johndoe`)
+  </Step>
+  
+  <Step title="View profile information">
+    See the user's display name, avatar, and total favorites count
+  </Step>
+  
+  <Step title="Browse their collection">
+    Explore wallpapers in the same grid layout as the main site
+  </Step>
+  
+  <Step title="Interact with wallpapers">
+    Click wallpapers to view fullscreen, download, or add to your own favorites
+  </Step>
+</Steps>
+
+## Share page features
+
+The share page displays:
+
+<CardGroup cols={2}>
+  <Card title="User profile" icon="user">
+    Display name, username, and profile picture from Clerk
+  </Card>
+  
+  <Card title="Favorites count" icon="heart">
+    Total number of wallpapers in the collection
+  </Card>
+  
+  <Card title="Wallpaper grid" icon="grid">
+    Standard WallpaperGrid with all browsing features
+  </Card>
+  
+  <Card title="Loading states" icon="loader">
+    Loading indicators and error handling for missing users
+  </Card>
+</CardGroup>
+
+## API endpoint
+
+The share page uses the public API endpoint:
+
+```bash
+GET /api/favorites/[username]
+```
+
+This returns:
+
+```json
+{
+  "username": "johndoe",
+  "displayName": "John",
+  "imageUrl": "https://img.clerk.com/...",
+  "favorites": ["id1", "id2", "id3"],
+  "favoritesCount": 3
+}
+```
+
+See the [API documentation](/api/endpoints/favorites-username) for details.
+
+## Privacy considerations
+
+<Warning>
+  Favorites are publicly accessible to anyone who knows your username. There is no option to make favorites private.
+</Warning>
+
+Be aware that:
+- Anyone can view your favorites if they know your username
+- Favorites are visible on the share page without authentication
+- Changes to your favorites are immediately reflected
+- There's no way to hide or protect your favorites list
+
+## Error handling
+
+The share page handles various error states:
+
+<AccordionGroup>
+  <Accordion title="User not found">
+    Displays "User not found" message when the username doesn't exist
+  </Accordion>
+  
+  <Accordion title="No favorites">
+    Shows empty state when user has no favorites yet
+  </Accordion>
+  
+  <Accordion title="Loading error">
+    Displays "Failed to load favorites" if the API request fails
+  </Accordion>
+</AccordionGroup>
+
+## Building on sharing
+
+You can use the favorites API to build:
+
+### Community features
+- Curated collections from power users
+- Featured favorites on a landing page
+- User galleries and portfolios
+
+### Discovery features
+- Similar users based on overlapping favorites
+- Popular wallpapers across all users
+- Trending favorites over time
+
+### Social features
+- Follow other users' collections
+- Notifications for new favorites from followed users
+- Comments or likes on shared collections
+
+## Example implementation
+
+Fetch and display a user's favorites:
+
+```javascript
+async function loadSharedFavorites(username) {
+  const response = await fetch(
+    `https://wallwidgy.vercel.app/api/favorites/${encodeURIComponent(username)}`
+  );
+  
+  if (response.status === 404) {
+    console.log('User not found');
+    return;
+  }
+  
+  const data = await response.json();
+  
+  console.log(`${data.displayName}'s Favorites`);
+  console.log(`Total: ${data.favoritesCount}`);
+  
+  // Display wallpapers from data.favorites array
+}
+```
+
+<Tip>
+  Create themed collections by curating favorites around specific styles, colors, or categories, then share with others who appreciate that aesthetic.
+</Tip>
+
+## See also
+
+- [Favorites feature](/features/favorites) - Learn about the favorites system
+- [GET /api/favorites/[username]](/api/endpoints/favorites-username) - API documentation
+- [Favorites management](/api/endpoints/favorites) - Managing your own favorites

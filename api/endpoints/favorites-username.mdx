@@ -1,0 +1,191 @@
+---
+title: Get user favorites
+description: View another user's public favorites collection by username
+---
+
+# GET /api/favorites/[username]
+
+Retrieve a user's public favorites collection by their username. This endpoint enables the shared favorites feature.
+
+<Note>
+  This endpoint is public and does not require authentication. Users can share their favorites collections with anyone via their username.
+</Note>
+
+## Request
+
+### Path parameters
+
+<ParamField path="username" type="string" required>
+  The username of the user whose favorites you want to view
+</ParamField>
+
+### Example request
+
+```bash cURL
+curl https://wallwidgy.vercel.app/api/favorites/johndoe
+```
+
+```javascript JavaScript
+fetch('https://wallwidgy.vercel.app/api/favorites/johndoe')
+  .then(response => response.json())
+  .then(data => {
+    console.log(`${data.displayName} has ${data.favoritesCount} favorites`);
+    console.log(data.favorites);
+  });
+```
+
+```python Python
+import requests
+
+response = requests.get('https://wallwidgy.vercel.app/api/favorites/johndoe')
+data = response.json()
+
+print(f"{data['displayName']} has {data['favoritesCount']} favorites")
+print(data['favorites'])
+```
+
+## Response
+
+### Success response (200)
+
+<ResponseField name="username" type="string">
+  The user's username
+</ResponseField>
+
+<ResponseField name="displayName" type="string">
+  The user's display name (firstName or username if no firstName)
+</ResponseField>
+
+<ResponseField name="imageUrl" type="string">
+  URL to the user's profile image
+</ResponseField>
+
+<ResponseField name="favorites" type="string[]">
+  Array of wallpaper IDs in the user's favorites
+</ResponseField>
+
+<ResponseField name="favoritesCount" type="number">
+  Total number of favorites
+</ResponseField>
+
+```json
+{
+  "username": "johndoe",
+  "displayName": "John",
+  "imageUrl": "https://img.clerk.com/...",
+  "favorites": [
+    "wallpaper-abc123",
+    "wallpaper-def456",
+    "wallpaper-ghi789"
+  ],
+  "favoritesCount": 3
+}
+```
+
+### Error responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request">
+    ```json
+    {
+      "error": "Username is required"
+    }
+    ```
+    
+    Returned when no username is provided in the URL.
+  </Accordion>
+
+  <Accordion title="404 Not Found">
+    ```json
+    {
+      "error": "User not found"
+    }
+    ```
+    
+    Returned when no user exists with the specified username.
+  </Accordion>
+
+  <Accordion title="500 Internal Server Error">
+    ```json
+    {
+      "error": "Failed to fetch favorites"
+    }
+    ```
+    
+    Returned when there's an error communicating with Clerk.
+  </Accordion>
+</AccordionGroup>
+
+## Usage example
+
+Build a shared favorites viewer:
+
+```javascript
+async function displayUserFavorites(username) {
+  try {
+    const response = await fetch(
+      `https://wallwidgy.vercel.app/api/favorites/${encodeURIComponent(username)}`
+    );
+    
+    if (response.status === 404) {
+      console.error('User not found');
+      return;
+    }
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch favorites');
+    }
+    
+    const data = await response.json();
+    
+    console.log(`Viewing ${data.displayName}'s collection`);
+    console.log(`Total favorites: ${data.favoritesCount}`);
+    
+    // Fetch wallpaper details for each favorite
+    const wallpapers = await Promise.all(
+      data.favorites.map(id => 
+        fetch(`/api/wallpapers/${id}`).then(r => r.json())
+      )
+    );
+    
+    // Display wallpapers...
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+displayUserFavorites('johndoe');
+```
+
+## Share URL format
+
+Users can share their favorites using this URL pattern:
+
+```
+https://wallwidgy.vercel.app/share/[username]
+```
+
+Example: `https://wallwidgy.vercel.app/share/johndoe`
+
+The share page uses this endpoint to display the user's favorites collection.
+
+## Privacy
+
+Favorites are stored in Clerk's `publicMetadata`, making them publicly accessible. Users should be aware that:
+
+- Anyone can view their favorites if they know the username
+- Favorites are visible on the share page
+- There is no option to make favorites private
+
+<Tip>
+  Use this endpoint to build features like:
+  - Shared favorites galleries
+  - User collections
+  - Wallpaper recommendations based on similar users
+  - Social features around wallpaper discovery
+</Tip>
+
+## See also
+
+- [POST /api/favorites](/api/endpoints/favorites) - Manage your own favorites
+- [Favorites feature guide](/features/favorites) - Learn about favorites and sharing

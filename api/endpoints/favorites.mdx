@@ -1,0 +1,237 @@
+---
+title: Manage favorites
+description: Manage user favorites with GET, POST, and PATCH operations
+---
+
+# /api/favorites
+
+Manage the authenticated user's favorite wallpapers. This endpoint requires authentication via Clerk.
+
+## GET - Fetch favorites
+
+Retrieve the current user's favorite wallpapers from their Clerk metadata.
+
+### Authentication
+
+Requires a valid Clerk session. Returns 401 if not authenticated.
+
+### Example request
+
+```bash cURL
+curl https://wallwidgy.vercel.app/api/favorites \
+  -H "Authorization: Bearer YOUR_CLERK_TOKEN"
+```
+
+```javascript JavaScript
+fetch('https://wallwidgy.vercel.app/api/favorites', {
+  credentials: 'include' // Include cookies for Clerk session
+})
+  .then(response => response.json())
+  .then(data => console.log(data.favorites));
+```
+
+### Response
+
+<ResponseField name="favorites" type="string[]">
+  Array of wallpaper IDs that the user has favorited
+</ResponseField>
+
+```json
+{
+  "favorites": [
+    "wallpaper-id-1",
+    "wallpaper-id-2",
+    "wallpaper-id-3"
+  ]
+}
+```
+
+---
+
+## POST - Save favorites
+
+Replace the user's entire favorites list with a new array.
+
+### Request body
+
+<ParamField body="favorites" type="string[]" required>
+  Array of wallpaper IDs to save as the user's complete favorites list
+</ParamField>
+
+### Example request
+
+```bash cURL
+curl -X POST https://wallwidgy.vercel.app/api/favorites \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_CLERK_TOKEN" \
+  -d '{"favorites": ["id1", "id2", "id3"]}'
+```
+
+```javascript JavaScript
+fetch('https://wallwidgy.vercel.app/api/favorites', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify({
+    favorites: ['id1', 'id2', 'id3']
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Whether the operation succeeded
+</ResponseField>
+
+<ResponseField name="favorites" type="string[]">
+  The updated favorites array
+</ResponseField>
+
+```json
+{
+  "success": true,
+  "favorites": ["id1", "id2", "id3"]
+}
+```
+
+---
+
+## PATCH - Toggle single favorite
+
+Add or remove a single wallpaper from the user's favorites.
+
+### Request body
+
+<ParamField body="wallpaperId" type="string" required>
+  The ID of the wallpaper to add or remove
+</ParamField>
+
+<ParamField body="action" type="string" required>
+  Action to perform: `"add"` or `"remove"`
+</ParamField>
+
+### Example request
+
+```bash cURL
+curl -X PATCH https://wallwidgy.vercel.app/api/favorites \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_CLERK_TOKEN" \
+  -d '{"wallpaperId": "wallpaper-123", "action": "add"}'
+```
+
+```javascript JavaScript
+// Add a favorite
+fetch('https://wallwidgy.vercel.app/api/favorites', {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify({
+    wallpaperId: 'wallpaper-123',
+    action: 'add'
+  })
+});
+
+// Remove a favorite
+fetch('https://wallwidgy.vercel.app/api/favorites', {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify({
+    wallpaperId: 'wallpaper-123',
+    action: 'remove'
+  })
+});
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Whether the operation succeeded
+</ResponseField>
+
+<ResponseField name="favorites" type="string[]">
+  The updated favorites array after the operation
+</ResponseField>
+
+```json
+{
+  "success": true,
+  "favorites": ["id1", "id2", "wallpaper-123"]
+}
+```
+
+## Error responses
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized">
+    ```json
+    {
+      "error": "Unauthorized"
+    }
+    ```
+    
+    Returned when the user is not authenticated with Clerk.
+  </Accordion>
+
+  <Accordion title="400 Bad Request">
+    ```json
+    {
+      "error": "Invalid favorites format"
+    }
+    ```
+    
+    Returned when the favorites parameter is not an array (POST).
+    
+    ```json
+    {
+      "error": "Invalid request"
+    }
+    ```
+    
+    Returned when wallpaperId or action is missing or invalid (PATCH).
+  </Accordion>
+
+  <Accordion title="500 Internal Server Error">
+    ```json
+    {
+      "error": "Failed to fetch favorites"
+    }
+    ```
+    
+    Returned when there's an error communicating with Clerk.
+  </Accordion>
+</AccordionGroup>
+
+## Data storage
+
+Favorites are stored in Clerk's user metadata:
+
+```typescript
+// Stored in user.publicMetadata
+{
+  favorites: ["wallpaper-id-1", "wallpaper-id-2"]
+}
+```
+
+This allows:
+- Automatic sync across devices when the user signs in
+- Public access to favorites via the username endpoint
+- Persistence without a separate database
+
+<Tip>
+  Use PATCH for individual add/remove operations to avoid race conditions. Use POST when you need to replace the entire favorites list (e.g., during initial sync from localStorage).
+</Tip>
+
+## See also
+
+- [GET /api/favorites/[username]](/api/endpoints/favorites-username) - View another user's favorites
+- [Favorites feature guide](/features/favorites) - Learn about the favorites system
